@@ -3,619 +3,418 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Elite Vehicle Desk | Automotive Intelligence</title>
-  
-  <!-- Tailwind CSS CDN -->
+  <title>Elite Vehicle Desk</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
-  <!-- Google Fonts: Inter & JetBrains Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
           colors: {
             brand: {
-              400: '#38bdf8',
-              500: '#0284c7',
-              600: '#0369a1',
-            },
-            dark: {
-              bg: '#060913',
-              panel: 'rgba(15, 23, 42, 0.75)',
-              card: 'rgba(30, 41, 59, 0.4)',
+              50: '#f0f6ff',
+              100: '#e0edff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#0f172a',
             }
           }
         }
       }
     }
   </script>
-
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- QRCode.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    body {
-      background-color: #060913;
-      background-image: 
-        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.5) 0%, transparent 100%);
-      background-attachment: fixed;
-    }
-
-    .glass-panel {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
     .glass-card {
-      background: rgba(30, 41, 59, 0.4);
+      background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    .glass-card:hover {
-      border-color: rgba(56, 189, 248, 0.3);
-      box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.15);
-    }
-
-    .glass-input {
-      background: rgba(2, 6, 23, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-    }
-
-    .glass-input:focus {
-      border-color: #38bdf8;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
-    }
-
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #060913;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 3px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
   </style>
 </head>
-<body class="text-slate-200 font-sans min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
 
-  <!-- TOP NAVIGATION BAR -->
-  <header class="sticky top-0 z-40 border-b border-white/10 glass-panel">
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
+
+  <!-- Navbar -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-filter backdrop-blur-lg sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
-      <!-- Logo (Secret Admin 5-Tap Trigger) -->
-      <div id="logoTrigger" class="flex items-center gap-3 cursor-pointer select-none group py-1">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-all duration-300">
-          <i data-lucide="car" class="w-5 h-5"></i>
+      <!-- Brand Logo (Secret Trigger) -->
+      <div id="brand-logo" class="flex items-center gap-3 cursor-pointer select-none group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
         </div>
         <div>
-          <h1 class="font-extrabold text-lg text-white tracking-wide leading-none flex items-center gap-1.5">
-            ELITE <span class="text-sky-400">VEHICLE</span> DESK
+          <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            Elite Vehicle Desk
+            <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">PRO</span>
           </h1>
-          <p class="text-[10px] text-slate-400 font-mono tracking-wider uppercase mt-1">Automotive Intelligence</p>
+          <p class="text-xs text-slate-400">Automotive Information Portal</p>
         </div>
       </div>
 
-      <!-- Wallet & Add Balance Button -->
-      <div class="flex items-center gap-3">
-        <div class="glass-input rounded-xl px-3.5 py-1.5 flex items-center gap-2.5 border border-sky-500/20 shadow-inner">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span class="text-xs text-slate-400 font-medium hidden sm:inline">Balance:</span>
-          <span id="userPoints" class="font-mono text-sm font-bold text-sky-400">1</span>
-          <span class="text-xs text-slate-400 font-medium">Points</span>
+      <!-- Right Controls: Wallet & Recharge -->
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 rounded-full px-4 py-1.5 shadow-inner">
+          <i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i>
+          <span class="text-xs font-medium text-slate-300">Points:</span>
+          <span id="wallet-balance" class="text-sm font-bold text-emerald-400">--</span>
         </div>
-
-        <button onclick="openRechargeModal()" class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-lg shadow-sky-500/20 flex items-center gap-2 active:scale-95">
-          <i data-lucide="wallet" class="w-4 h-4"></i>
+        <button id="open-recharge-btn" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-full flex items-center gap-2 transition shadow-lg shadow-blue-600/25 active:scale-95">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
           <span>Add Balance</span>
         </button>
       </div>
-
     </div>
   </header>
 
-  <!-- MAIN HERO & DASHBOARD AREA -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
-
-    <!-- SEARCH HERO SECTION -->
-    <section class="max-w-3xl mx-auto text-center mb-10">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-sky-400 border border-sky-500/20 mb-4">
-        <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i>
-        <span>Instant RTO Specifications & Owner Lookup</span>
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
+    
+    <!-- Hero / Search Container -->
+    <section class="max-w-3xl mx-auto w-full text-center space-y-6 pt-4">
+      <div class="space-y-2">
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+          Instant Vehicle Detail Verification
+        </h2>
+        <p class="text-slate-400 text-sm sm:text-base">
+          Enter any registered vehicle number to instantly retrieve complete RTO registry records.
+        </p>
       </div>
-      <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
-        Verify Vehicle Details Instantly
-      </h2>
-      <p class="text-slate-400 text-sm sm:text-base mb-6 max-w-xl mx-auto">
-        Retrieve complete registration authority records, chassis & engine numbers, RC validity, and ownership status in real-time.
-      </p>
 
-      <!-- Search Form Container -->
-      <div class="glass-panel p-2.5 sm:p-3 rounded-2xl shadow-2xl relative border border-white/10">
-        <form id="searchForm" onsubmit="handleSearch(event)" class="flex flex-col sm:flex-row gap-2">
-          <div class="relative flex-grow">
+      <!-- Search Box -->
+      <div class="glass-card p-3 sm:p-4 rounded-2xl shadow-2xl relative border border-slate-800">
+        <form id="search-form" class="flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-              <i data-lucide="search" class="w-5 h-5"></i>
+              <i data-lucide="car" class="w-5 h-5"></i>
             </div>
             <input 
               type="text" 
-              id="vehicleInput" 
-              placeholder="e.g., UP32AB1234 / DL4SDH5925" 
-              maxlength="15" 
+              id="reg-input"
+              placeholder="e.g. MH01AB1234" 
+              class="w-full pl-11 pr-4 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 text-base tracking-wider font-mono font-semibold uppercase focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition"
               required
-              class="w-full pl-11 pr-4 py-3.5 rounded-xl glass-input text-white uppercase tracking-wider font-mono text-base sm:text-lg focus:outline-none transition-all placeholder:text-slate-600" 
-              oninput="formatInput(this)"
             />
           </div>
           <button 
             type="submit" 
-            id="searchBtn"
-            class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold px-7 py-3.5 rounded-xl transition-all shadow-lg shadow-sky-500/25 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+            id="search-btn"
+            class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold px-8 py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <i data-lucide="search" class="w-4 h-4"></i>
-            <span>Search</span>
+            <i data-lucide="search" class="w-5 h-5"></i>
+            <span>Fetch Details</span>
           </button>
         </form>
-        
-        <div class="flex items-center justify-between px-3 mt-2.5 text-xs text-slate-400 font-mono">
-          <span>Format: <strong class="text-sky-400">UP32AB1234</strong> / <strong class="text-sky-400">DL4SDH5925</strong></span>
-          <span class="text-slate-400">Cost: <strong class="text-amber-400">1 Point</strong> (₹17)</span>
+        <div class="mt-2 text-left px-2 flex justify-between items-center text-xs text-slate-500">
+          <span>Format: Standard Indian Registration (e.g. DL10CE0001)</span>
+          <span class="text-slate-400">Cost: <strong class="text-amber-400 font-semibold">1 Point</strong> / Search</span>
         </div>
       </div>
     </section>
 
-    <!-- LOADING SPINNER -->
-    <div id="loaderState" class="hidden my-12 text-center">
-      <div class="inline-block relative w-16 h-16">
-        <div class="w-16 h-16 rounded-full border-4 border-sky-500/20 border-t-sky-500 animate-spin"></div>
-      </div>
-      <p class="text-slate-400 text-sm mt-4 font-mono animate-pulse">Querying central RTO database...</p>
-    </div>
-
-    <!-- VEHICLE DETAILS DISPLAY -->
-    <section id="resultsSection" class="hidden transition-all duration-300">
-      
-      <!-- Title Bar -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-white/10 gap-2">
+    <!-- Results Container (Hidden initially) -->
+    <section id="results-section" class="hidden space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
         <div>
-          <span class="text-xs font-mono text-sky-400 uppercase tracking-widest">Verified Record</span>
-          <h3 id="resRegNo" class="text-2xl sm:text-3xl font-bold font-mono text-white tracking-wider">---</h3>
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <i data-lucide="file-text" class="w-5 h-5 text-blue-400"></i>
+            Registration Record
+          </h3>
+          <p id="fetched-reg-no" class="text-sm font-mono text-blue-400 font-bold mt-1"></p>
         </div>
-        <div class="flex items-center gap-2">
-          <span id="resStatusBadge" class="px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> ACTIVE
-          </span>
-        </div>
+        <button id="clear-results-btn" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i data-lucide="x-circle" class="w-4 h-4"></i> Clear View
+        </button>
       </div>
 
-      <!-- 12 DATA CARDS -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        
-        <!-- Card 1: Owner Name -->
-        <div class="glass-card p-4 rounded-xl transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
-              <i data-lucide="user" class="w-5 h-5"></i>
-            </div>
-            <div class="overflow-hidden">
-              <p class="text-xs text-slate-400">Owner Name</p>
-              <p id="cardOwner" class="font-semibold text-white mt-0.5 truncate">NA</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 2: Registration Date -->
-        <div class="glass-card p-4 rounded-xl transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
-              <i data-lucide="calendar" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <p class="text-xs text-slate-400">Registration Date</p>
-              <p id="cardRegDate" class="font-semibold text-white font-mono mt-0.5">NA</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 3: Full Chassis Number -->
-        <div class="glass-card p-4 rounded-xl transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-              <i data-lucide="fingerprint" class="w-5 h-5"></i>
-            </div>
-            <div class="overflow-hidden">
-              <p class="text-xs text-slate-400">Full Chassis Number</p>
-              <p id="cardChassis" class="font-semibold text-white font-mono text-xs sm:text-sm mt-0.5 truncate">NA</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 4: Full Engine Number -->
-        <div class="glass-card p-4 rounded-xl transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
-              <i data-lucide="cog" class="w-5 h-5"></i>
-            </div>
-            <div class="overflow-hidden">
-              <p class="text-xs text-slate-400">Full Engine Number</p>
-              <p id="cardEngine" class="font-semibold text-white font-mono text-xs sm:text-sm mt-0.5 truncate">NA</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 5: Address -->
-        <div class="glass-card p-4 rounded-xl transition-all md:col-span-2 lg:col-span-1">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
-              <i data-lucide="map-pin" class="w-5 h-5"></i>
-            </div>
-            <div class="overflow-hidden">
-              <p class="text-xs text-slate-400">Address</p>
-              <p id="cardAddress" class="font-semibold text-white text-xs truncate mt-0.5" title="Address">NA</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 6: Engine CC -->
-        <div class="glass-card p-4 rounded-xl transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
-              <i data-lucide="gauge" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <p class="text-xs text-slate-400">Engine Capacity (CC)</p>
-              <p id="cardCC" class="font-semibold text-white font-mono mt-0.5">NA</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 7: Month & Year of Mfg -->
-        <div class="glass-card p-4 rounded-xl transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
-              <i data-lucide="factory" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <p class="text-xs text-slate-400">Month & Year of Mfg</p>
-              <p id="cardMfg" class="font-semibold text-white font-mono mt-0.5">NA</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 8: Colour -->
-        <div class="glass-card p-4 rounded-xl transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 shrink-0">
-              <i data-lucide="palette" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <p class="text-xs text-slate-400">Vehicle Colour</p>
-              <p id="cardColour" class="font-semibold text-white mt-0.5">NA</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 9: Unladen Weight -->
-        <div class="glass-card p-4 rounded-xl transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-fuchsia-500/10 border border-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 shrink-0">
-              <i data-lucide="weight" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <p class="text-xs text-slate-400">Unladen Weight</p>
-              <p id="cardWeight" class="font-semibold text-white font-mono mt-0.5">NA</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 10: Financed Status -->
-        <div class="glass-card p-4 rounded-xl transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 shrink-0">
-              <i data-lucide="landmark" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <p class="text-xs text-slate-400">Financed Status</p>
-              <p id="cardFinanced" class="font-semibold text-white text-xs sm:text-sm mt-0.5">NA</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 11: Registration Authority -->
-        <div class="glass-card p-4 rounded-xl transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
-              <i data-lucide="building-2" class="w-5 h-5"></i>
-            </div>
-            <div class="overflow-hidden">
-              <p class="text-xs text-slate-400">Registration Authority</p>
-              <p id="cardRTO" class="font-semibold text-white text-xs sm:text-sm mt-0.5 truncate">NA</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 12: RC Valid Upto -->
-        <div class="glass-card p-4 rounded-xl transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 shrink-0">
-              <i data-lucide="shield-check" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <p class="text-xs text-slate-400">RC Valid Upto</p>
-              <p id="cardRCValid" class="font-semibold text-white font-mono mt-0.5">NA</p>
-            </div>
-          </div>
-        </div>
-
+      <!-- Detail Cards Grid -->
+      <div id="details-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Dynamic Cards Inserted Here -->
       </div>
     </section>
 
   </main>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-white/10 py-6 glass-panel mt-12">
-    <div class="max-w-7xl mx-auto px-4 text-center">
-      <p class="text-slate-400 text-xs sm:text-sm font-medium tracking-wide">
-        © All Rights Reserved | Vikas Mishra
-      </p>
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-900/40 py-6 text-center text-xs text-slate-500 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>&copy; 2026 Elite Vehicle Desk. All rights reserved.</p>
+      <p class="text-slate-600">Secure & Direct API Verification Portal</p>
     </div>
   </footer>
 
-  <!-- RECHARGE / UPI MODAL -->
-  <div id="rechargeModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-md rounded-2xl p-6 border border-white/15 relative shadow-2xl">
-      <button onclick="closeRechargeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1">
+  <!-- RECHARGE MODAL -->
+  <div id="recharge-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
+    <div class="glass-card max-w-md w-full rounded-2xl p-6 border border-slate-700 shadow-2xl relative space-y-5 animate-in fade-in zoom-in-95 duration-150">
+      <button id="close-recharge-modal" class="absolute top-4 right-4 text-slate-400 hover:text-white">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
-      <div class="text-center mb-6">
-        <div class="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center mx-auto mb-3">
-          <i data-lucide="wallet" class="w-6 h-6"></i>
-        </div>
-        <h3 class="text-xl font-bold text-white">Recharge Wallet</h3>
-        <p class="text-xs text-slate-400 mt-1">Select an amount to generate instant dynamic UPI QR Code</p>
+      <div>
+        <h3 id="recharge-title" class="text-lg font-bold text-white flex items-center gap-2">
+          <i data-lucide="credit-card" class="w-5 h-5 text-emerald-400"></i>
+          Add Balance / Recharge
+        </h3>
+        <p class="text-xs text-slate-400 mt-1">Scan the QR code using any UPI App (PhonePe, Google Pay, Paytm).</p>
       </div>
 
-      <!-- Preset Amount Buttons -->
-      <div class="grid grid-cols-3 gap-3 mb-6">
-        <button onclick="selectAmount(70)" class="p-3 rounded-xl glass-input text-center hover:border-sky-500 border border-white/10 transition-all group">
-          <p class="text-[10px] text-slate-400 group-hover:text-sky-300">Minimum</p>
-          <p class="text-lg font-bold text-white font-mono mt-0.5">₹70</p>
-          <p class="text-[10px] text-sky-400 mt-1">~4 Points</p>
-        </button>
-        <button onclick="selectAmount(100)" class="p-3 rounded-xl glass-input text-center hover:border-sky-500 border border-white/10 transition-all group">
-          <p class="text-[10px] text-slate-400 group-hover:text-sky-300">Popular</p>
-          <p class="text-lg font-bold text-white font-mono mt-0.5">₹100</p>
-          <p class="text-[10px] text-sky-400 mt-1">~6 Points</p>
-        </button>
-        <button onclick="selectAmount(150)" class="p-3 rounded-xl glass-input text-center hover:border-sky-500 border border-white/10 transition-all group">
-          <p class="text-[10px] text-slate-400 group-hover:text-sky-300">Pro</p>
-          <p class="text-lg font-bold text-white font-mono mt-0.5">₹150</p>
-          <p class="text-[10px] text-sky-400 mt-1">~9 Points</p>
-        </button>
+      <!-- Preset Selection -->
+      <div class="space-y-2">
+        <label class="text-xs text-slate-300 font-medium">Select Points Package:</label>
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" class="preset-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl p-2.5 text-center transition" data-amount="70">
+            <div class="text-sm font-bold text-white">₹70</div>
+            <div class="text-[10px] text-emerald-400">70 Points</div>
+          </button>
+          <button type="button" class="preset-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl p-2.5 text-center transition" data-amount="100">
+            <div class="text-sm font-bold text-white">₹100</div>
+            <div class="text-[10px] text-emerald-400">100 Points</div>
+          </button>
+          <button type="button" class="preset-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl p-2.5 text-center transition" data-amount="150">
+            <div class="text-sm font-bold text-white">₹150</div>
+            <div class="text-[10px] text-emerald-400">150 Points</div>
+          </button>
+        </div>
       </div>
 
-      <!-- Dynamic QR & Timer Area -->
-      <div id="qrArea" class="hidden text-center border-t border-white/10 pt-5">
-        <div class="bg-white p-3 rounded-2xl inline-block shadow-xl mb-3">
-          <img id="qrImage" src="" alt="UPI QR Code" class="w-44 h-44 mx-auto block">
+      <!-- Amount Input -->
+      <div class="space-y-1">
+        <div class="flex justify-between text-xs">
+          <label class="text-slate-300 font-medium">Custom Amount (INR):</label>
+          <span class="text-slate-400">Min: ₹70</span>
         </div>
-        
-        <div class="flex items-center justify-center gap-2 text-amber-400 text-xs font-mono mb-3">
-          <i data-lucide="clock" class="w-4 h-4"></i>
-          <span>Validity Countdown: <strong id="qrTimer">04:00</strong></span>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-bold">₹</span>
+          <input type="number" id="recharge-amount" min="70" value="70" class="w-full pl-8 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white font-bold focus:outline-none focus:border-blue-500" />
         </div>
-
-        <p class="text-xs text-slate-300 mb-4">Payable Amount: <strong id="selectedAmountDisplay" class="text-sky-400 font-mono text-sm">₹70</strong></p>
-
-        <!-- Direct WhatsApp Verification Button -->
-        <a 
-          id="whatsappBtn" 
-          href="#" 
-          target="_blank" 
-          class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-emerald-600/20 active:scale-95"
-        >
-          <i data-lucide="message-square" class="w-5 h-5"></i>
-          <span>Send Screenshot on WhatsApp</span>
-        </a>
       </div>
 
+      <!-- Live QR Box -->
+      <div class="flex flex-col items-center justify-center p-4 bg-slate-900 rounded-xl border border-slate-800 space-y-3">
+        <div id="qrcode-container" class="bg-white p-2.5 rounded-xl shadow-lg"></div>
+        <div class="text-center">
+          <p class="text-xs text-slate-400">UPI ID: <span class="text-slate-200 font-mono select-all">9696159863.wallet@phonepe</span></p>
+          <p class="text-xs font-semibold text-amber-400 mt-1 flex items-center justify-center gap-1">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+            Timer Remaining: <span id="payment-timer" class="font-mono">04:00</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Confirmation Button -->
+      <a id="whatsapp-confirm-btn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition">
+        <i data-lucide="message-square" class="w-4 h-4"></i>
+        <span>Confirm Payment on WhatsApp</span>
+      </a>
     </div>
   </div>
 
-  <!-- INSUFFICIENT BALANCE MODAL -->
-  <div id="insufficientModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-sm rounded-2xl p-6 border border-amber-500/30 text-center shadow-2xl">
-      <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-3">
-        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+  <!-- ADMIN PASSCODE MODAL -->
+  <div id="admin-auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden">
+    <div class="glass-card max-w-xs w-full rounded-2xl p-6 border border-slate-700 shadow-2xl space-y-4 text-center">
+      <div class="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto border border-amber-500/20">
+        <i data-lucide="lock" class="w-6 h-6"></i>
       </div>
-      <h3 class="text-lg font-bold text-white mb-2">Points Required!</h3>
-      <p class="text-xs text-slate-300 mb-6">Please recharge your wallet to perform search operations. (1 Search = 1 Point = ₹17)</p>
-      
+      <div>
+        <h3 class="text-base font-bold text-white">Admin Authentication</h3>
+        <p class="text-xs text-slate-400 mt-1">Enter Secret Admin Passcode</p>
+      </div>
+      <input type="password" id="admin-passcode" maxlength="4" placeholder="**** text-center" class="w-full text-center tracking-widest text-xl py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-500 font-mono" />
       <div class="flex gap-2">
-        <button onclick="closeInsufficientModal()" class="flex-1 px-4 py-2.5 rounded-xl glass-input text-xs font-semibold text-slate-300">Close</button>
-        <button onclick="closeInsufficientModal(); openRechargeModal();" class="flex-1 bg-gradient-to-r from-sky-500 to-indigo-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg">Recharge Now</button>
+        <button id="close-admin-auth" class="flex-1 bg-slate-800 text-slate-300 py-2 rounded-xl text-xs font-semibold">Cancel</button>
+        <button id="submit-admin-auth" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white py-2 rounded-xl text-xs font-semibold">Unlock</button>
       </div>
     </div>
   </div>
 
   <!-- SECRET ADMIN PANEL MODAL -->
-  <div id="adminModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-sm rounded-2xl p-6 border border-sky-500/40 relative shadow-2xl">
-      <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
+  <div id="admin-panel-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden">
+    <div class="glass-card max-w-md w-full rounded-2xl p-6 border border-amber-500/30 shadow-2xl space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+          <i data-lucide="shield-alert" class="w-5 h-5"></i>
+          Secret Admin Panel
+        </h3>
+        <button id="close-admin-panel" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
 
-      <div class="text-center mb-5">
-        <div class="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center mx-auto mb-2">
-          <i data-lucide="shield-check" class="w-6 h-6"></i>
+      <div class="space-y-4">
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+          <span class="text-xs text-slate-400">Current User Wallet Points:</span>
+          <div id="admin-current-points" class="text-3xl font-extrabold text-emerald-400 font-mono">--</div>
         </div>
-        <h3 class="text-lg font-bold text-white">Secret Admin Panel</h3>
-        <p class="text-xs text-slate-400">Permanent Point Addition System</p>
-      </div>
 
-      <!-- Step 1: Security PIN Input -->
-      <div id="adminPinStep">
-        <label class="block text-xs font-medium text-slate-300 mb-1.5">Enter Passcode</label>
-        <input 
-          type="password" 
-          id="adminPin" 
-          placeholder="Passcode" 
-          class="w-full px-3.5 py-2.5 rounded-xl glass-input text-white font-mono text-center text-sm mb-3 focus:outline-none"
-        />
-        <button onclick="verifyAdminPin()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-semibold py-2.5 rounded-xl text-xs transition-all">Verify Passcode</button>
-      </div>
-
-      <!-- Step 2: Set Balance Action -->
-      <div id="adminActionStep" class="hidden">
-        <div class="mb-3">
-          <label class="block text-xs font-medium text-slate-300 mb-1">Set Total Balance Points</label>
-          <input 
-            type="number" 
-            id="adminPointInput" 
-            placeholder="e.g. 5, 10, 50" 
-            min="0"
-            class="w-full px-3.5 py-2.5 rounded-xl glass-input text-white font-mono text-center text-base mb-3 focus:outline-none"
-          />
+        <div class="space-y-2">
+          <label class="text-xs text-slate-300 font-medium">Modify Points Balance:</label>
+          <input type="number" id="admin-points-input" class="w-full py-2.5 px-4 bg-slate-900 border border-slate-700 rounded-xl text-white font-mono font-bold focus:outline-none focus:border-amber-500" placeholder="Enter new points amount" />
         </div>
-        <button onclick="saveAdminPoints()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl text-xs transition-all">Save Permanently</button>
-      </div>
 
+        <div class="grid grid-cols-2 gap-2">
+          <button id="admin-add-50" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs py-2 rounded-lg font-medium border border-slate-700">+50 Points</button>
+          <button id="admin-add-100" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs py-2 rounded-lg font-medium border border-slate-700">+100 Points</button>
+        </div>
+
+        <button id="save-admin-points" class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg shadow-amber-600/20">
+          Save Changes
+        </button>
+      </div>
     </div>
-  </div>
-
-  <!-- TOAST NOTIFICATION -->
-  <div id="toast" class="fixed bottom-5 right-5 z-50 glass-panel px-4 py-3 rounded-xl border border-white/20 text-xs text-white shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2.5 pointer-events-none">
-    <i id="toastIcon" data-lucide="info" class="w-4 h-4 text-sky-400"></i>
-    <span id="toastMsg">Notification message</span>
   </div>
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    const TARGET_UPI = "9696159863.wallet@phonepe";
-    const TARGET_PHONE = "919696159863";
-    const SECRET_PIN = "9696";
-
-    let points = 1;
-    let logoTapCount = 0;
-    let logoTapTimer = null;
+    // --- APP CONSTANTS & STATE ---
+    const STORAGE_KEY = 'evd_points';
+    const UPI_ID = '9696159863.wallet@phonepe';
+    const WHATSAPP_NUM = '919696159863';
+    const API_URL = 'https://unsalubriously-unfragrant-rosetta.ngrok-free.dev/api/vehicle-details-only';
+    
+    let userPoints = 1;
     let timerInterval = null;
+    let clickCount = 0;
+    let lastClickTime = 0;
+    let qrcodeInstance = null;
 
-    document.addEventListener("DOMContentLoaded", () => {
-      lucide.createIcons();
+    // --- DOM ELEMENTS ---
+    const walletBalanceEl = document.getElementById('wallet-balance');
+    const regInput = document.getElementById('reg-input');
+    const searchForm = document.getElementById('search-form');
+    const searchBtn = document.getElementById('search-btn');
+    const resultsSection = document.getElementById('results-section');
+    const fetchedRegNo = document.getElementById('fetched-reg-no');
+    const detailsGrid = document.getElementById('details-grid');
+    const clearResultsBtn = document.getElementById('clear-results-btn');
+
+    // Modals
+    const rechargeModal = document.getElementById('recharge-modal');
+    const openRechargeBtn = document.getElementById('open-recharge-btn');
+    const closeRechargeModal = document.getElementById('close-recharge-modal');
+    const rechargeAmountInput = document.getElementById('recharge-amount');
+    const paymentTimerEl = document.getElementById('payment-timer');
+    const whatsappConfirmBtn = document.getElementById('whatsapp-confirm-btn');
+    const rechargeTitle = document.getElementById('recharge-title');
+
+    // Admin
+    const brandLogo = document.getElementById('brand-logo');
+    const adminAuthModal = document.getElementById('admin-auth-modal');
+    const adminPasscodeInput = document.getElementById('admin-passcode');
+    const submitAdminAuthBtn = document.getElementById('submit-admin-auth');
+    const closeAdminAuthBtn = document.getElementById('close-admin-auth');
+    const adminPanelModal = document.getElementById('admin-panel-modal');
+    const closeAdminPanelBtn = document.getElementById('close-admin-panel');
+    const adminCurrentPoints = document.getElementById('admin-current-points');
+    const adminPointsInput = document.getElementById('admin-points-input');
+    const saveAdminPointsBtn = document.getElementById('save-admin-points');
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
       initWallet();
-      setupSecretAdminTrigger();
+      initLucide();
+      setupEventListeners();
     });
 
-    // --- PERMANENT WALLET MANAGEMENT ---
+    function initLucide() {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    // --- WALLET MANAGEMENT ---
     function initWallet() {
-      const storedPoints = localStorage.getItem("evd_points");
+      const storedPoints = localStorage.getItem(STORAGE_KEY);
       if (storedPoints === null) {
-        localStorage.setItem("evd_points", "1");
-        points = 1;
+        userPoints = 1; // Default 1 free point
+        localStorage.setItem(STORAGE_KEY, userPoints);
       } else {
-        points = parseInt(storedPoints, 10);
-        if (isNaN(points)) points = 0;
+        userPoints = parseInt(storedPoints, 10) || 0;
       }
       updateWalletUI();
     }
 
     function updateWalletUI() {
-      document.getElementById("userPoints").innerText = points;
+      walletBalanceEl.textContent = userPoints;
+      if (adminCurrentPoints) adminCurrentPoints.textContent = userPoints;
     }
 
-    function setPoints(newPoints) {
-      points = Math.max(0, parseInt(newPoints, 10) || 0);
-      localStorage.setItem("evd_points", points.toString());
+    function setPoints(amount) {
+      userPoints = Math.max(0, amount);
+      localStorage.setItem(STORAGE_KEY, userPoints);
       updateWalletUI();
     }
 
     function deductPoint() {
-      if (points > 0) {
-        setPoints(points - 1);
+      if (userPoints > 0) {
+        setPoints(userPoints - 1);
         return true;
       }
       return false;
     }
 
-    // --- INPUT SANITIZATION & FORMATTING ---
-    function formatInput(input) {
-      input.value = input.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    // --- TOAST NOTIFICATION SYSTEM ---
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const bgColors = {
+        success: 'bg-emerald-950/90 border-emerald-500/50 text-emerald-200',
+        error: 'bg-rose-950/90 border-rose-500/50 text-rose-200',
+        warning: 'bg-amber-950/90 border-amber-500/50 text-amber-200',
+        info: 'bg-slate-900/90 border-blue-500/50 text-slate-200'
+      };
+
+      const icons = {
+        success: 'check-circle',
+        error: 'alert-circle',
+        warning: 'alert-triangle',
+        info: 'info'
+      };
+
+      toast.className = `glass-card p-4 rounded-xl border ${bgColors[type]} shadow-xl flex items-center justify-between gap-3 pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0`;
+      toast.innerHTML = `
+        <div class="flex items-center gap-3">
+          <i data-lucide="${icons[type]}" class="w-5 h-5 shrink-0"></i>
+          <p class="text-xs font-medium">${message}</p>
+        </div>
+        <button class="text-slate-400 hover:text-white" onclick="this.parentElement.remove()">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      `;
+
+      container.appendChild(toast);
+      initLucide();
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
     }
 
-    // --- SECRET ADMIN TRIGGER ---
-    function setupSecretAdminTrigger() {
-      const logo = document.getElementById("logoTrigger");
-      logo.addEventListener("click", () => {
-        logoTapCount++;
-        clearTimeout(logoTapTimer);
+    // --- INPUT FORMATTING ---
+    regInput.addEventListener('input', (e) => {
+      // Auto-uppercase and remove spaces/hyphens/special chars
+      let val = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      e.target.value = val;
+    });
 
-        if (logoTapCount === 5) {
-          logoTapCount = 0;
-          openAdminModal();
-        } else {
-          logoTapTimer = setTimeout(() => {
-            logoTapCount = 0;
-          }, 2000);
-        }
-      });
-    }
-
-    function openAdminModal() {
-      document.getElementById("adminPin").value = "";
-      document.getElementById("adminPointInput").value = "";
-      document.getElementById("adminPinStep").classList.remove("hidden");
-      document.getElementById("adminActionStep").classList.add("hidden");
-      document.getElementById("adminModal").classList.remove("hidden");
-    }
-
-    function closeAdminModal() {
-      document.getElementById("adminModal").classList.add("hidden");
-    }
-
-    function verifyAdminPin() {
-      const pin = document.getElementById("adminPin").value.trim();
-      if (pin === SECRET_PIN) {
-        document.getElementById("adminPinStep").classList.add("hidden");
-        document.getElementById("adminActionStep").classList.remove("hidden");
-        document.getElementById("adminPointInput").value = points;
-        showToast("Passcode Verified!", "success");
-      } else {
-        showToast("Incorrect Passcode!", "error");
-      }
-    }
-
-    function saveAdminPoints() {
-      const val = document.getElementById("adminPointInput").value;
-      if (val !== "") {
-        setPoints(val);
-        showToast(`Balance updated to ${val} points!`, "success");
-        closeAdminModal();
-      }
-    }
-
-    // --- API FETCH LOGIC WITH CORS PROXY & NGROK FIXES ---
+    // --- API FETCH LOGIC ---
     async function fetchVehicleData(cleanRegNo) {
-      const primaryUrl = `https://unsalubriously-unfragrant-rosetta.ngrok-free.dev/api/vehicle-details-only?regn_no=${cleanRegNo}`;
+      const primaryUrl = `${API_URL}?regn_no=${cleanRegNo}`;
       const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(primaryUrl)}`;
 
       const fetchOptions = {
@@ -632,7 +431,7 @@
         response = await fetch(primaryUrl, fetchOptions);
         if (!response.ok) throw new Error("Direct fetch failed");
       } catch (err) {
-        console.warn("Direct fetch blocked or failed, retrying via CORS proxy...", err);
+        console.warn("Direct fetch blocked or failed, retrying via CORS proxy...");
         response = await fetch(corsProxyUrl, fetchOptions);
       }
 
@@ -654,181 +453,221 @@
       return targetObj;
     }
 
-    // --- SEARCH HANDLER ---
-    async function handleSearch(e) {
+    // --- SEARCH FORM HANDLER ---
+    searchForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const inputVal = document.getElementById("vehicleInput").value.trim();
-      const cleanRegNo = inputVal.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      const rawInput = regInput.value;
+      const cleanRegNo = rawInput.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
 
-      if (!cleanRegNo) {
-        showToast("Please enter a valid vehicle number", "error");
+      if (!cleanRegNo || cleanRegNo.length < 4) {
+        showToast('Please enter a valid registration number.', 'warning');
         return;
       }
 
-      if (points <= 0) {
-        openInsufficientModal();
+      // Check balance rule
+      if (userPoints < 1) {
+        showToast('Insufficient point balance. Recharge required.', 'warning');
+        openRechargeModalHandler("Recharge Required");
         return;
       }
 
-      document.getElementById("resultsSection").classList.add("hidden");
-      document.getElementById("loaderState").classList.remove("hidden");
-      document.getElementById("searchBtn").disabled = true;
+      // UI Loading state
+      searchBtn.disabled = true;
+      searchBtn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>Fetching...</span>`;
+      initLucide();
 
       try {
-        const item = await fetchVehicleData(cleanRegNo);
-        
-        if (item && typeof item === 'object') {
-          deductPoint();
-          renderVehicleData(item, cleanRegNo);
-          showToast("Vehicle record retrieved successfully!", "success");
-        } else {
-          showToast("Vehicle details not found", "error");
+        const data = await fetchVehicleData(cleanRegNo);
+
+        if (!data || Object.keys(data).length === 0) {
+          throw new Error("No record found for this registration number.");
         }
+
+        // Success: Deduct 1 point & Display Data
+        deductPoint();
+        renderResults(cleanRegNo, data);
+        showToast(`Vehicle details retrieved successfully! 1 point deducted.`, 'success');
 
       } catch (error) {
-        console.error("Fetch error:", error);
-        showToast(error.message || "Failed to fetch vehicle details", "error");
+        console.error(error);
+        showToast(error.message || 'Failed to retrieve vehicle details.', 'error');
       } finally {
-        document.getElementById("loaderState").classList.add("hidden");
-        document.getElementById("searchBtn").disabled = false;
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = `<i data-lucide="search" class="w-5 h-5"></i><span>Fetch Details</span>`;
+        initLucide();
       }
-    }
+    });
 
-    // --- RENDER VEHICLE DATA ---
-    function renderVehicleData(item, cleanRegNo) {
-      const safe = (val, fallback = "NA") => {
-        if (val === null || val === undefined || val === "" || val === "null" || val === "NA") {
-          return fallback;
-        }
-        return val;
+    // --- RENDER API RESULTS ---
+    function renderResults(regNo, data) {
+      fetchedRegNo.textContent = regNo;
+      detailsGrid.innerHTML = '';
+
+      // Helper function to format keys cleanly
+      const formatKey = (key) => {
+        return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
       };
 
-      const signzy = item?.meta_data?.signzy_response?.result || {};
-      const custDetails = item?.customer_details || {};
-      const vehDetails = item?.vehicle_details || {};
+      // Filter out empty or object values
+      const entries = Object.entries(data).filter(([k, v]) => v !== null && v !== undefined && typeof v !== 'object');
 
-      const owner = safe(custDetails.full_name || signzy.owner);
-      const regDate = safe(signzy.regDate || vehDetails.registration_date);
-      const chassis = safe(item.chassis_number || signzy.chassis || vehDetails.chassis_no);
-      const engine = safe(item.engine_number || signzy.engine || vehDetails.engine_no);
-      const address = safe(custDetails.communication_address?.address_line || signzy.presentAddress || signzy.permanentAddress);
-      const cc = signzy.vehicleCubicCapacity ? `${signzy.vehicleCubicCapacity} cc` : "NA";
-      const mfg = safe(signzy.vehicleManufacturingMonthYear || (item.manufactured_month && item.manufactured_year ? `${item.manufactured_month}/${item.manufactured_year}` : null));
-      const colour = safe(signzy.vehicleColour || vehDetails.vehicle_color);
-      const weight = signzy.unladenWeight ? `${signzy.unladenWeight} kg` : "NA";
-      const isFinanced = vehDetails.is_vehicle_financed ? 'Financed' : 'Not Financed';
-      const rto = safe(signzy.regAuthority || item.rb_rto_code);
-      const rcValid = safe(signzy.rcExpiryDate);
-      const status = safe(signzy.status, "ACTIVE");
-
-      document.getElementById("resRegNo").innerText = item.registration_number || signzy.regNo || cleanRegNo;
-      document.getElementById("resStatusBadge").innerHTML = `<span class="w-2 h-2 rounded-full ${status === 'ACTIVE' ? 'bg-emerald-400' : 'bg-rose-400'}"></span> ${status}`;
-
-      document.getElementById("cardOwner").innerText = owner;
-      document.getElementById("cardRegDate").innerText = regDate;
-      document.getElementById("cardChassis").innerText = chassis;
-      document.getElementById("cardEngine").innerText = engine;
-      document.getElementById("cardAddress").innerText = address;
-      document.getElementById("cardAddress").title = address;
-      document.getElementById("cardCC").innerText = cc;
-      document.getElementById("cardMfg").innerText = mfg;
-      document.getElementById("cardColour").innerText = colour;
-      document.getElementById("cardWeight").innerText = weight;
-      document.getElementById("cardFinanced").innerText = isFinanced;
-      document.getElementById("cardRTO").innerText = rto;
-      document.getElementById("cardRCValid").innerText = rcValid;
-
-      document.getElementById("resultsSection").classList.remove("hidden");
-    }
-
-    // --- RECHARGE SYSTEM & UPI QR ---
-    function openRechargeModal() {
-      document.getElementById("rechargeModal").classList.remove("hidden");
-      document.getElementById("qrArea").classList.add("hidden");
-    }
-
-    function closeRechargeModal() {
-      document.getElementById("rechargeModal").classList.add("hidden");
-      clearInterval(timerInterval);
-    }
-
-    function openInsufficientModal() {
-      document.getElementById("insufficientModal").classList.remove("hidden");
-    }
-
-    function closeInsufficientModal() {
-      document.getElementById("insufficientModal").classList.add("hidden");
-    }
-
-    function selectAmount(amount) {
-      if (amount < 70) {
-        showToast("Minimum transaction amount is ₹70", "error");
-        return;
-      }
-
-      document.getElementById("selectedAmountDisplay").innerText = `₹${amount}`;
-      
-      const upiLink = `upi://pay?pa=${TARGET_UPI}&pn=Elite%20Vehicle%20Desk&am=${amount}&cu=INR`;
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`;
-
-      document.getElementById("qrImage").src = qrApiUrl;
-
-      const waMessage = encodeURIComponent(`Hello, I have paid ₹${amount} for Elite Vehicle Desk. Here is my payment screenshot.`);
-      document.getElementById("whatsappBtn").href = `https://wa.me/${TARGET_PHONE}?text=${waMessage}`;
-
-      document.getElementById("qrArea").classList.remove("hidden");
-      startTimer(240);
-    }
-
-    function startTimer(seconds) {
-      clearInterval(timerInterval);
-      let timer = seconds;
-      const timerDisplay = document.getElementById("qrTimer");
-
-      timerInterval = setInterval(() => {
-        let mins = parseInt(timer / 60, 10);
-        let secs = parseInt(timer % 60, 10);
-
-        mins = mins < 10 ? "0" + mins : mins;
-        secs = secs < 10 ? "0" + secs : secs;
-
-        timerDisplay.textContent = `${mins}:${secs}`;
-
-        if (--timer < 0) {
-          clearInterval(timerInterval);
-          timerDisplay.textContent = "EXPIRED";
-          showToast("QR Code expired! Please re-select amount.", "error");
-        }
-      }, 1000);
-    }
-
-    // --- TOAST NOTIFICATIONS ---
-    function showToast(message, type = "info") {
-      const toast = document.getElementById("toast");
-      const toastMsg = document.getElementById("toastMsg");
-      const toastIcon = document.getElementById("toastIcon");
-
-      toastMsg.innerText = message;
-
-      if (type === "success") {
-        toastIcon.setAttribute("data-lucide", "check-circle");
-        toastIcon.className = "w-4 h-4 text-emerald-400";
-      } else if (type === "error") {
-        toastIcon.setAttribute("data-lucide", "alert-circle");
-        toastIcon.className = "w-4 h-4 text-rose-400";
+      if (entries.length === 0) {
+        detailsGrid.innerHTML = `<div class="col-span-full text-center text-slate-400 py-8">No printable fields found in records.</div>`;
       } else {
-        toastIcon.setAttribute("data-lucide", "info");
-        toastIcon.className = "w-4 h-4 text-sky-400";
+        entries.forEach(([key, value]) => {
+          const card = document.createElement('div');
+          card.className = 'glass-card p-4 rounded-xl border border-slate-800 space-y-1 hover:border-slate-700 transition';
+          card.innerHTML = `
+            <span class="text-[11px] font-semibold text-slate-400 tracking-wider uppercase block">${formatKey(key)}</span>
+            <span class="text-sm font-semibold text-slate-100 font-mono break-words block">${value}</span>
+          `;
+          detailsGrid.appendChild(card);
+        });
       }
-      
-      lucide.createIcons();
 
-      toast.classList.remove("translate-y-20", "opacity-0");
-      
-      setTimeout(() => {
-        toast.classList.add("translate-y-20", "opacity-0");
-      }, 3500);
+      resultsSection.classList.remove('hidden');
+      resultsSection.scrollIntoView({ behavior: 'smooth' });
     }
+
+    clearResultsBtn.addEventListener('click', () => {
+      resultsSection.classList.add('hidden');
+      detailsGrid.innerHTML = '';
+      regInput.value = '';
+    });
+
+    // --- RECHARGE & QR SYSTEM ---
+    function openRechargeModalHandler(customTitle = "Add Balance / Recharge") {
+      rechargeTitle.innerHTML = `<i data-lucide="credit-card" class="w-5 h-5 text-emerald-400"></i> ${customTitle}`;
+      rechargeModal.classList.remove('hidden');
+      generateQRCode();
+      startPaymentTimer();
+      initLucide();
+    }
+
+    openRechargeBtn.addEventListener('click', () => openRechargeModalHandler());
+    closeRechargeModal.addEventListener('click', () => {
+      rechargeModal.classList.add('hidden');
+      clearInterval(timerInterval);
+    });
+
+    // Preset buttons
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const amt = btn.getAttribute('data-amount');
+        rechargeAmountInput.value = amt;
+        generateQRCode();
+      });
+    });
+
+    rechargeAmountInput.addEventListener('input', () => {
+      generateQRCode();
+    });
+
+    function generateQRCode() {
+      let amount = parseFloat(rechargeAmountInput.value) || 70;
+      if (amount < 70) amount = 70; // Enforce Min
+
+      const upiUrl = `upi://pay?pa=${UPI_ID}&pn=EliteVehicleDesk&am=${amount}&cu=INR`;
+      
+      const qrContainer = document.getElementById('qrcode-container');
+      qrContainer.innerHTML = '';
+
+      qrcodeInstance = new QRCode(qrContainer, {
+        text: upiUrl,
+        width: 160,
+        height: 160,
+        colorDark: "#0f172a",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      // Update WhatsApp Confirmation Link
+      const msg = encodeURIComponent(`Hello Admin, I have completed a payment of ₹${amount} to UPI ID ${UPI_ID} for Elite Vehicle Desk points. Please confirm.`);
+      whatsappConfirmBtn.href = `https://wa.me/${WHATSAPP_NUM}?text=${msg}`;
+    }
+
+    function startPaymentTimer() {
+      clearInterval(timerInterval);
+      let timeLeft = 240; // 4 minutes in seconds
+
+      const updateDisplay = () => {
+        const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+        const secs = (timeLeft % 60).toString().padStart(2, '0');
+        paymentTimerEl.textContent = `${mins}:${secs}`;
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          paymentTimerEl.textContent = "Expired";
+          showToast("QR session expired. Please regenerate.", "warning");
+        }
+        timeLeft--;
+      };
+
+      updateDisplay();
+      timerInterval = setInterval(updateDisplay, 1000);
+    }
+
+    // --- SECRET ADMIN PANEL ---
+    brandLogo.addEventListener('click', () => {
+      const now = Date.now();
+      if (now - lastClickTime < 600) {
+        clickCount++;
+      } else {
+        clickCount = 1;
+      }
+      lastClickTime = now;
+
+      if (clickCount === 5) {
+        clickCount = 0;
+        adminPasscodeInput.value = '';
+        adminAuthModal.classList.remove('hidden');
+        adminPasscodeInput.focus();
+      }
+    });
+
+    closeAdminAuthBtn.addEventListener('click', () => adminAuthModal.classList.add('hidden'));
+
+    submitAdminAuthBtn.addEventListener('click', unlockAdminPanel);
+    adminPasscodeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') unlockAdminPanel();
+    });
+
+    function unlockAdminPanel() {
+      if (adminPasscodeInput.value === '9696') {
+        adminAuthModal.classList.add('hidden');
+        adminPointsInput.value = userPoints;
+        adminCurrentPoints.textContent = userPoints;
+        adminPanelModal.classList.remove('hidden');
+        initLucide();
+      } else {
+        showToast('Incorrect Admin Passcode.', 'error');
+        adminPasscodeInput.value = '';
+      }
+    }
+
+    closeAdminPanelBtn.addEventListener('click', () => adminPanelModal.classList.add('hidden'));
+
+    document.getElementById('admin-add-50').addEventListener('click', () => {
+      let cur = parseInt(adminPointsInput.value) || 0;
+      adminPointsInput.value = cur + 50;
+    });
+
+    document.getElementById('admin-add-100').addEventListener('click', () => {
+      let cur = parseInt(adminPointsInput.value) || 0;
+      adminPointsInput.value = cur + 100;
+    });
+
+    saveAdminPointsBtn.addEventListener('click', () => {
+      const val = parseInt(adminPointsInput.value, 10);
+      if (!isNaN(val) && val >= 0) {
+        setPoints(val);
+        adminPanelModal.classList.add('hidden');
+        showToast(`Points balance updated to ${val}.`, 'success');
+      } else {
+        showToast('Please enter a valid point value.', 'warning');
+      }
+    });
+
   </script>
 </body>
 </html>
