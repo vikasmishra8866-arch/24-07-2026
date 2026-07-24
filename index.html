@@ -1,233 +1,829 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle RC Details Finder</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
-</head>
-<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elite Vehicle Desk - Automotive Dashboard</title>
 
-    <!-- Header -->
-    <header class="bg-indigo-600 shadow-md text-white py-4 px-6">
-        <div class="max-w-5xl mx-auto flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-car-side text-2xl"></i>
-                <h1 class="text-xl font-bold tracking-wide">Vehicle Info Portal</h1>
-            </div>
-            <span class="text-xs bg-indigo-500 px-3 py-1 rounded-full uppercase tracking-wider font-semibold">Live System</span>
-        </div>
-    </header>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Main Container -->
-    <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow">
-        
-        <!-- Search Section -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8 text-center">
-            <h2 class="text-2xl font-bold text-slate-900 mb-2">Vehicle Search</h2>
-            <p class="text-slate-500 text-sm mb-6">Enter vehicle registration number to get complete RC details.</p>
-            
-            <form id="searchForm" class="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto">
-                <div class="relative flex-grow">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input type="text" id="vehicleInput" value="" placeholder="e.g. GJ05MS9717" required
-                        class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white uppercase tracking-wider font-medium text-slate-900">
-                </div>
-                <button type="submit" id="searchBtn"
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-sm hover:shadow flex items-center justify-center space-x-2">
-                    <span>Search</span>
-                </button>
-            </form>
-        </div>
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        <!-- Loader -->
-        <div id="loader" class="hidden text-center py-12">
-            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-indigo-600 mb-3"></i>
-            <p class="text-slate-500 font-medium">Fetching vehicle details...</p>
-        </div>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-        <!-- Error Message -->
-        <div id="errorMsg" class="hidden bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-center mb-6 font-medium"></div>
-
-        <!-- Result Section -->
-        <div id="resultContainer" class="hidden space-y-6">
-            
-            <!-- Vehicle & Owner Summary Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-100 pb-4 mb-6 gap-4">
-                    <div class="flex items-center space-x-4">
-                        <div id="brandLogoContainer" class="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden p-2 border border-slate-200">
-                            <!-- Brand Logo will load here -->
-                        </div>
-                        <div>
-                            <span id="vehicleCategory" class="text-xs font-semibold bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-md uppercase"></span>
-                            <h3 id="vehicleModelName" class="text-xl font-bold text-slate-900 mt-1"></h3>
-                            <p id="rcNumberDisplay" class="text-sm font-mono text-slate-500 tracking-wider"></p>
-                        </div>
-                    </div>
-                    <div class="text-left md:text-right">
-                        <span id="rcStatus" class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"></span>
-                        <p class="text-xs text-slate-400 mt-1">RTO: <span id="registeredAt" class="text-slate-600 font-medium"></span></p>
-                    </div>
-                </div>
-
-                <!-- Grid Details -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <span class="block text-xs font-medium text-slate-400 uppercase">Owner Name</span>
-                        <span id="ownerName" class="text-slate-800 font-bold mt-0.5 block"></span>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <span class="block text-xs font-medium text-slate-400 uppercase">Fuel Type</span>
-                        <span id="fuelType" class="text-slate-800 font-bold mt-0.5 block"></span>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <span class="block text-xs font-medium text-slate-400 uppercase">Maker / Model</span>
-                        <span id="makerModel" class="text-slate-800 font-bold mt-0.5 block"></span>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <span class="block text-xs font-medium text-slate-400 uppercase">Registration Date</span>
-                        <span id="regDate" class="text-slate-800 font-bold mt-0.5 block"></span>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <span class="block text-xs font-medium text-slate-400 uppercase">Fitness Upto</span>
-                        <span id="fitUpto" class="text-slate-800 font-bold mt-0.5 block"></span>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <span class="block text-xs font-medium text-slate-400 uppercase">Insurance Upto</span>
-                        <span id="insuranceUpto" class="text-slate-800 font-bold mt-0.5 block"></span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Technical & Additional Specifications -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                <h4 class="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
-                    <i class="fa-solid fa-gears text-indigo-600"></i>
-                    <span>Technical & Verification Details</span>
-                </h4>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div class="border-b sm:border-b-0 sm:border-r border-slate-100 pb-3 sm:pb-0 sm:pr-4">
-                        <span class="text-slate-400 block text-xs">Chassis Number</span>
-                        <span id="chassisNum" class="font-mono font-semibold text-slate-700"></span>
-                    </div>
-                    <div class="border-b sm:border-b-0 sm:border-r border-slate-100 pb-3 sm:pb-0 sm:pr-4">
-                        <span class="text-slate-400 block text-xs">Engine Number</span>
-                        <span id="engineNum" class="font-mono font-semibold text-slate-700"></span>
-                    </div>
-                    <div class="border-b sm:border-b-0 sm:border-r border-slate-100 pb-3 sm:pb-0 sm:pr-4">
-                        <span class="text-slate-400 block text-xs">Norms Type</span>
-                        <span id="normsType" class="font-semibold text-slate-700"></span>
-                    </div>
-                    <div>
-                        <span class="text-slate-400 block text-xs">PUCC Upto</span>
-                        <span id="puccUpto" class="font-semibold text-slate-700"></span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
-        <p>&copy; 2026 Vehicle Info System. All rights reserved.</p>
-    </footer>
-
-    <!-- JavaScript Logic -->
-    <script>
-        const searchForm = document.getElementById('searchForm');
-        const vehicleInput = document.getElementById('vehicleInput');
-        const loader = document.getElementById('loader');
-        const errorMsg = document.getElementById('errorMsg');
-        const resultContainer = document.getElementById('resultContainer');
-
-        searchForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const vehicleNumber = vehicleInput.value.trim().toUpperCase();
-            
-            if (!vehicleNumber) return;
-
-            // Reset views
-            loader.classList.remove('hidden');
-            errorMsg.classList.add('hidden');
-            resultContainer.classList.add('hidden');
-
-            try {
-                const apiUrl = `https://randkikichut.vercel.app/?vehicle_number=${vehicleNumber}`;
-                const response = await fetch(apiUrl);
-                const jsonResponse = await response.json();
-
-                loader.classList.add('hidden');
-
-                // Handle both Array format and Direct Object format safely
-                let vehicleData = null;
-                if (Array.isArray(jsonResponse) && jsonResponse.length > 0 && jsonResponse[0].status === "success") {
-                    vehicleData = jsonResponse[0].data;
-                } else if (jsonResponse && jsonResponse.status === "success") {
-                    vehicleData = jsonResponse.data;
-                }
-
-                if (vehicleData) {
-                    populateData(vehicleData);
-                    resultContainer.classList.remove('hidden');
-                } else {
-                    showError(`Vehicle details for "${vehicleNumber}" not found on the server.`);
-                }
-            } catch (err) {
-                loader.classList.add('hidden');
-                showError("Failed to fetch data. Make sure network and API are accessible.");
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f6ff',
+              400: '#38bdf8',
+              500: '#0284c7',
+              600: '#0284c7',
+              900: '#0c4a6e',
+            },
+            dark: {
+              base: '#090d16',
+              card: 'rgba(15, 23, 42, 0.75)',
+              border: 'rgba(255, 255, 255, 0.08)',
             }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #060911;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.08) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-input {
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .glass-input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #060911;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body class="text-slate-200 font-sans min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-40 border-b border-white/10 glass-panel">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo (With Secret Admin Trigger) -->
+      <div id="logoTrigger" class="flex items-center gap-3 cursor-pointer select-none group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+          <i class="fa-solid font-bold fa-car-rear text-lg"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg text-white tracking-wide leading-none flex items-center gap-1.5">
+            ELITE <span class="text-sky-400">VEHICLE</span> DESK
+          </h1>
+          <p class="text-[10px] text-slate-400 font-mono tracking-wider uppercase mt-1">Automotive Intelligence</p>
+        </div>
+      </div>
+
+      <!-- Wallet & Point System UI -->
+      <div class="flex items-center gap-3">
+        <div class="glass-input rounded-xl px-3.5 py-1.5 flex items-center gap-2.5 border border-sky-500/20">
+          <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+          <span class="text-xs text-slate-400 font-medium hidden sm:inline">Balance:</span>
+          <span id="userPoints" class="font-mono text-sm font-bold text-sky-400">1</span>
+          <span class="text-xs text-slate-400 font-medium">Points</span>
+        </div>
+
+        <button onclick="openRechargeModal()" class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-lg shadow-sky-500/20 flex items-center gap-1.5 active:scale-95">
+          <i class="fa-solid fa-wallet"></i>
+          <span>Add Balance</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+    <!-- SEARCH HERO SECTION -->
+    <section class="max-w-3xl mx-auto text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-sky-400 border border-sky-500/20 mb-4">
+        <i class="fa-solid fa-bolt text-amber-400"></i>
+        <span>Instant Vehicle Details Lookup</span>
+      </div>
+      <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
+        Verify Any Vehicle Details Instantly
+      </h2>
+      <p class="text-slate-400 text-sm sm:text-base mb-6 max-w-xl mx-auto">
+        Get complete RTO specifications, registration details, chassis/engine numbers and owner status instantly.
+      </p>
+
+      <!-- Search Box Area -->
+      <div class="glass-panel p-2 sm:p-3 rounded-2xl shadow-2xl relative border border-white/10">
+        <form id="searchForm" onsubmit="handleSearch(event)" class="flex flex-col sm:flex-row gap-2">
+          <div class="relative flex-grow">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <input 
+              type="text" 
+              id="vehicleInput" 
+              placeholder="UP32AB1234" 
+              maxlength="13" 
+              required
+              class="w-full pl-11 pr-4 py-3.5 rounded-xl glass-input text-white uppercase tracking-wider font-mono text-base sm:text-lg focus:outline-none transition-all placeholder:text-slate-600" 
+              oninput="formatInput(this)"
+            />
+          </div>
+          <button 
+            type="submit" 
+            id="searchBtn"
+            class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold px-6 py-3.5 rounded-xl transition-all shadow-lg shadow-sky-500/25 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+          >
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+          </button>
+        </form>
+        
+        <!-- Format Helper Text -->
+        <div class="flex items-center justify-between px-3 mt-2 text-xs text-slate-400 font-mono">
+          <span>Format Example: <strong class="text-sky-400">UP32AB1234</strong> / <strong class="text-sky-400">MH02CD5678</strong></span>
+          <span class="text-slate-400">Cost: <strong class="text-amber-400">1 Point</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOADER STATE -->
+    <div id="loaderState" class="hidden my-12 text-center">
+      <div class="inline-block relative w-16 h-16">
+        <div class="w-16 h-16 rounded-full border-4 border-sky-500/20 border-t-sky-500 animate-spin"></div>
+        <div class="absolute inset-0 flex items-center justify-center text-sky-400 text-xs font-bold">EVD</div>
+      </div>
+      <p class="text-slate-400 text-sm mt-4 font-mono animate-pulse">Fetching details from RTO database...</p>
+    </div>
+
+    <!-- DATA DISPLAY GRID SECTION -->
+    <section id="resultsSection" class="hidden transition-all duration-300">
+      
+      <!-- Vehicle Title Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-white/10 gap-2">
+        <div>
+          <span class="text-xs font-mono text-sky-400 uppercase tracking-widest">Search Result</span>
+          <h3 id="resRegNo" class="text-2xl font-bold font-mono text-white tracking-wider">DL4SDH5925</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="resStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> ACTIVE
+          </span>
+          <span id="resCategoryBadge" class="px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-white/10">
+            2-WHEELER
+          </span>
+        </div>
+      </div>
+
+      <!-- Grid Cards Layout (12 Spare / Grid Cards) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <!-- Card 1: Owner Name -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Owner Name</p>
+              <p id="cardOwner" class="font-semibold text-white mt-0.5">NA</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Registration Date -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+              <i class="fa-solid fa-calendar-check"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Registration Date</p>
+              <p id="cardRegDate" class="font-semibold text-white font-mono mt-0.5">NA</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Full Chassis Number -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <i class="fa-solid fa-barcode"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Full Chassis Number</p>
+              <p id="cardChassis" class="font-semibold text-white font-mono text-sm mt-0.5">NA</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Full Engine Number -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+              <i class="fa-solid fa-gears"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Full Engine Number</p>
+              <p id="cardEngine" class="font-semibold text-white font-mono text-sm mt-0.5">NA</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5: Address -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all md:col-span-2 lg:col-span-1">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <div class="overflow-hidden">
+              <p class="text-xs text-slate-400">Address</p>
+              <p id="cardAddress" class="font-semibold text-white text-xs truncate mt-0.5" title="Address">NA</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6: Engine CC -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+              <i class="fa-solid fa-gauge-high"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Engine CC</p>
+              <p id="cardCC" class="font-semibold text-white font-mono mt-0.5">NA</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 7: Month & Year of Mfg -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+              <i class="fa-solid fa-industry"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Month & Year of Mfg</p>
+              <p id="cardMfg" class="font-semibold text-white font-mono mt-0.5">NA</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 8: Colour -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
+              <i class="fa-solid fa-palette"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Vehicle Colour</p>
+              <p id="cardColour" class="font-semibold text-white mt-0.5">NA</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 9: Unladen Weight -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-fuchsia-500/10 border border-fuchsia-500/20 flex items-center justify-center text-fuchsia-400">
+              <i class="fa-solid fa-weight-hanging"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Unladen Weight</p>
+              <p id="cardWeight" class="font-semibold text-white font-mono mt-0.5">NA</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 10: Financed Status -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+              <i class="fa-solid fa-building-columns"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Financed Status</p>
+              <p id="cardFinanced" class="font-semibold text-white text-xs mt-0.5">NA</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 11: Registration Authority -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+              <i class="fa-solid fa-building"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Registration Authority</p>
+              <p id="cardRTO" class="font-semibold text-white text-xs mt-0.5">NA</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 12: RC Valid Upto -->
+        <div class="glass-panel p-4 rounded-xl border border-white/10 hover:border-sky-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">RC Valid Upto</p>
+              <p id="cardRCValid" class="font-semibold text-white font-mono mt-0.5">NA</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER SECTION -->
+  <footer class="border-t border-white/10 py-6 glass-panel mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-slate-400 text-xs sm:text-sm font-medium">
+        © All Rights Reserved | Vikas Mishra
+      </p>
+    </div>
+  </footer>
+
+  <!-- MODAL 1: RECHARGE & PAYMENT MODAL -->
+  <div id="rechargeModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md rounded-2xl p-6 border border-white/15 relative shadow-2xl">
+      <button onclick="closeRechargeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center mx-auto mb-3 text-xl">
+          <i class="fa-solid fa-wallet"></i>
+        </div>
+        <h3 class="text-xl font-bold text-white">Recharge Wallet</h3>
+        <p class="text-xs text-slate-400 mt-1">Select an amount to generate instant dynamic UPI QR Code</p>
+      </div>
+
+      <!-- Preset Amount Buttons -->
+      <div class="grid grid-cols-3 gap-3 mb-6">
+        <button onclick="selectAmount(70)" class="preset-btn p-3 rounded-xl glass-input text-center hover:border-sky-500 border border-white/10 transition-all group">
+          <p class="text-xs text-slate-400 group-hover:text-sky-300">Minimum</p>
+          <p class="text-lg font-bold text-white font-mono mt-0.5">₹70</p>
+          <p class="text-[10px] text-sky-400 mt-1">~4 Points</p>
+        </button>
+        <button onclick="selectAmount(100)" class="preset-btn p-3 rounded-xl glass-input text-center hover:border-sky-500 border border-white/10 transition-all group">
+          <p class="text-xs text-slate-400 group-hover:text-sky-300">Popular</p>
+          <p class="text-lg font-bold text-white font-mono mt-0.5">₹100</p>
+          <p class="text-[10px] text-sky-400 mt-1">~6 Points</p>
+        </button>
+        <button onclick="selectAmount(150)" class="preset-btn p-3 rounded-xl glass-input text-center hover:border-sky-500 border border-white/10 transition-all group">
+          <p class="text-xs text-slate-400 group-hover:text-sky-300">Pro</p>
+          <p class="text-lg font-bold text-white font-mono mt-0.5">₹150</p>
+          <p class="text-[10px] text-sky-400 mt-1">~9 Points</p>
+        </button>
+      </div>
+
+      <!-- QR Display Section -->
+      <div id="qrArea" class="hidden text-center border-t border-white/10 pt-5">
+        <div class="bg-white p-3 rounded-2xl inline-block shadow-lg mb-3">
+          <img id="qrImage" src="" alt="UPI QR Code" class="w-44 h-44 mx-auto">
+        </div>
+        
+        <!-- Timer -->
+        <div class="flex items-center justify-center gap-2 text-amber-400 text-xs font-mono mb-4">
+          <i class="fa-solid fa-clock"></i>
+          <span>QR Expires in: <strong id="qrTimer">04:00</strong></span>
+        </div>
+
+        <p class="text-xs text-slate-300 mb-4">Payable Amount: <strong id="selectedAmountDisplay" class="text-sky-400 font-mono text-sm">₹70</strong></p>
+
+        <!-- Send WhatsApp Screenshot Button -->
+        <a 
+          id="whatsappBtn" 
+          href="#" 
+          target="_blank" 
+          class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-emerald-600/20"
+        >
+          <i class="fa-brands fa-whatsapp text-lg"></i>
+          <span>Send Screenshot on WhatsApp</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL 2: INSUFFICIENT BALANCE WARNING -->
+  <div id="insufficientModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-sm rounded-2xl p-6 border border-amber-500/30 text-center shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-3 text-xl">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 class="text-lg font-bold text-white mb-2">Points Required!</h3>
+      <p class="text-xs text-slate-300 mb-6">Please recharge your wallet to perform search operations. (1 Search = 1 Point = ₹17)</p>
+      
+      <div class="flex gap-2">
+        <button onclick="closeInsufficientModal()" class="flex-1 px-4 py-2.5 rounded-xl glass-input text-xs font-semibold text-slate-300">Close</button>
+        <button onclick="closeInsufficientModal(); openRechargeModal();" class="flex-1 bg-gradient-to-r from-sky-500 to-indigo-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg">Recharge Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: SECRET ADMIN PANEL -->
+  <div id="adminModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-sm rounded-2xl p-6 border border-sky-500/40 relative shadow-2xl">
+      <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="text-center mb-5">
+        <div class="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center mx-auto mb-2 text-xl">
+          <i class="fa-solid fa-user-shield"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white">Secret Admin Panel</h3>
+        <p class="text-xs text-slate-400">Manual Point Addition System</p>
+      </div>
+
+      <!-- Step 1: PIN Input -->
+      <div id="adminPinStep">
+        <label class="block text-xs font-medium text-slate-300 mb-1.5">Enter Security PIN</label>
+        <input 
+          type="password" 
+          id="adminPin" 
+          placeholder="Enter PIN" 
+          class="w-full px-3.5 py-2.5 rounded-xl glass-input text-white font-mono text-center text-sm mb-3 focus:outline-none"
+        />
+        <button onclick="verifyAdminPin()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-semibold py-2.5 rounded-xl text-xs transition-all">Verify PIN</button>
+      </div>
+
+      <!-- Step 2: Set Points Input -->
+      <div id="adminActionStep" class="hidden">
+        <div class="mb-3">
+          <label class="block text-xs font-medium text-slate-300 mb-1">Set Total Points Balance</label>
+          <input 
+            type="number" 
+            id="adminPointInput" 
+            placeholder="e.g. 10" 
+            min="0"
+            class="w-full px-3.5 py-2.5 rounded-xl glass-input text-white font-mono text-center text-base mb-3 focus:outline-none"
+          />
+        </div>
+        <button onclick="saveAdminPoints()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl text-xs transition-all">Set Points</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 glass-panel px-4 py-3 rounded-xl border border-white/20 text-xs text-white shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2 pointer-events-none">
+    <i id="toastIcon" class="fa-solid fa-circle-info text-sky-400"></i>
+    <span id="toastMsg">Notification message</span>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // --- GLOBAL CONSTANTS & CONFIGS ---
+    const TARGET_UPI = "9696159863.wallet@phonepe";
+    const TARGET_PHONE = "919696159863";
+    const SECRET_PIN = "9696";
+    const API_URL = "https://unsalubriously-unfragrant-rosetta.ngrok-free.dev/api/vehicle-details-only?regn_no=";
+
+    let points = 1;
+    let logoTapCount = 0;
+    let logoTapTimer = null;
+    let timerInterval = null;
+
+    // --- INITIALIZATION ---
+    document.addEventListener("DOMContentLoaded", () => {
+      initWallet();
+      setupSecretAdminTrigger();
+    });
+
+    // --- WALLET / LOCAL STORAGE MANAGEMENT ---
+    function initWallet() {
+      const storedPoints = localStorage.getItem("evd_points");
+      if (storedPoints === null) {
+        localStorage.setItem("evd_points", "1");
+        points = 1;
+      } else {
+        points = parseInt(storedPoints, 10) || 0;
+      }
+      updateWalletUI();
+    }
+
+    function updateWalletUI() {
+      document.getElementById("userPoints").innerText = points;
+    }
+
+    function setPoints(newPoints) {
+      points = Math.max(0, parseInt(newPoints, 10) || 0);
+      localStorage.setItem("evd_points", points.toString());
+      updateWalletUI();
+    }
+
+    function deductPoint() {
+      if (points > 0) {
+        setPoints(points - 1);
+        return true;
+      }
+      return false;
+    }
+
+    // --- INPUT FORMATTING ---
+    function formatInput(input) {
+      // Auto-capitalize & trim spaces
+      let val = input.value.toUpperCase().replace(/\s+/g, '');
+      input.value = val;
+    }
+
+    // --- SECRET ADMIN PANEL TRIGGER (5 TAP DETECTOR) ---
+    function setupSecretAdminTrigger() {
+      const logo = document.getElementById("logoTrigger");
+      logo.addEventListener("click", () => {
+        logoTapCount++;
+        clearTimeout(logoTapTimer);
+
+        if (logoTapCount === 5) {
+          logoTapCount = 0;
+          openAdminModal();
+        } else {
+          logoTapTimer = setTimeout(() => {
+            logoTapCount = 0;
+          }, 2000); // Reset tap count if inactive for 2s
+        }
+      });
+    }
+
+    function openAdminModal() {
+      document.getElementById("adminPin").value = "";
+      document.getElementById("adminPointInput").value = "";
+      document.getElementById("adminPinStep").classList.remove("hidden");
+      document.getElementById("adminActionStep").classList.add("hidden");
+      document.getElementById("adminModal").classList.remove("hidden");
+    }
+
+    function closeAdminModal() {
+      document.getElementById("adminModal").classList.add("hidden");
+    }
+
+    function verifyAdminPin() {
+      const pin = document.getElementById("adminPin").value;
+      if (pin === SECRET_PIN) {
+        document.getElementById("adminPinStep").classList.add("hidden");
+        document.getElementById("adminActionStep").classList.remove("hidden");
+        document.getElementById("adminPointInput").value = points;
+        showToast("PIN Verified successfully!", "success");
+      } else {
+        showToast("Incorrect PIN!", "error");
+      }
+    }
+
+    function saveAdminPoints() {
+      const val = document.getElementById("adminPointInput").value;
+      if (val !== "") {
+        setPoints(val);
+        showToast(`Balance updated to ${val} points!`, "success");
+        closeAdminModal();
+      }
+    }
+
+    // --- SEARCH VEHICLE ACTION ---
+    async function handleSearch(e) {
+      e.preventDefault();
+      const input = document.getElementById("vehicleInput").value.trim();
+
+      if (!input) {
+        showToast("Please enter a vehicle registration number", "error");
+        return;
+      }
+
+      // Check Point Balance
+      if (points <= 0) {
+        openInsufficientModal();
+        return;
+      }
+
+      // Show Loader & Hide previous results
+      document.getElementById("resultsSection").classList.add("hidden");
+      document.getElementById("loaderState").classList.remove("hidden");
+      document.getElementById("searchBtn").disabled = true;
+
+      try {
+        const response = await fetch(`${API_URL}${encodeURIComponent(input)}`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true"
+          }
         });
 
-        function populateData(d) {
-            document.getElementById('rcNumberDisplay').textContent = d.rc_number || 'N/A';
-            document.getElementById('vehicleModelName').textContent = d.maker_model || d.modelData?.v_model_name || 'N/A';
-            document.getElementById('vehicleCategory').textContent = d.vehicle_category_description || 'N/A';
-            document.getElementById('registeredAt').textContent = d.registered_at || 'N/A';
-            
-            const statusBadge = document.getElementById('rcStatus');
-            statusBadge.textContent = d.rc_status || 'UNKNOWN';
-            if(d.rc_status === 'ACTIVE') {
-                statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-200";
-            } else {
-                statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-200";
-            }
-
-            const logoContainer = document.getElementById('brandLogoContainer');
-            if (d.makeData && d.makeData.v_make_logo_url) {
-                logoContainer.innerHTML = `<img src="${d.makeData.v_make_logo_url}" alt="Logo" class="max-h-full max-w-full object-contain">`;
-            } else {
-                logoContainer.innerHTML = `<i class="fa-solid fa-motorcycle text-xl text-slate-400"></i>`;
-            }
-
-            document.getElementById('ownerName').textContent = d.owner_name || 'N/A';
-            document.getElementById('fuelType').textContent = d.fuel_type || 'N/A';
-            document.getElementById('makerModel').textContent = `${d.maker_description || ''} (${d.maker_model || ''})`;
-            document.getElementById('regDate').textContent = d.registration_date || 'N/A';
-            document.getElementById('fitUpto').textContent = d.fit_up_to || 'N/A';
-            document.getElementById('insuranceUpto').textContent = d.insurance_upto || 'N/A';
-
-            document.getElementById('chassisNum').textContent = d.vehicle_chasi_number || 'N/A';
-            document.getElementById('engineNum').textContent = d.vehicle_engine_number || 'N/A';
-            document.getElementById('normsType').textContent = d.norms_type || 'N/A';
-            document.getElementById('puccUpto').textContent = d.pucc_upto || 'N/A';
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
 
-        function showError(message) {
-            errorMsg.textContent = message;
-            errorMsg.classList.remove('hidden');
+        const data = await response.json();
+        
+        // Check if data array has content
+        if (Array.isArray(data) && data.length > 0) {
+          deductPoint();
+          renderVehicleData(data[0]);
+          showToast("Vehicle details retrieved successfully!", "success");
+        } else {
+          showToast("Vehicle details not found / Invalid Registration Number", "error");
         }
-    </script>
+
+      } catch (error) {
+        console.error("API Error:", error);
+        showToast("Vehicle details not found / Invalid Registration Number", "error");
+      } finally {
+        document.getElementById("loaderState").classList.add("hidden");
+        document.getElementById("searchBtn").disabled = false;
+      }
+    }
+
+    // --- SAFE DATA EXTRACTOR & RENDERER ---
+    function renderVehicleData(item) {
+      // Helper for deep safe access
+      const getVal = (path, fallback = "NA") => {
+        try {
+          const value = path();
+          if (value === null || value === undefined || value === "" || value === "null" || value === "NA") {
+            return fallback;
+          }
+          return value;
+        } catch (e) {
+          return fallback;
+        }
+      };
+
+      // Extract Signzy object if present
+      const signzy = item?.meta_data?.signzy_response?.result;
+      const cust = item?.customer_details;
+      const veh = item?.vehicle_details;
+
+      // Extract Data Fields safely
+      const regNo = getVal(() => item.registration_number || signzy.regNo || signzy.vehicleNumber, "UNKNOWN");
+      const owner = getVal(() => cust.full_name || signzy.owner, "NA");
+      const regDate = getVal(() => veh.registration_date || signzy.regDate, "NA");
+      const chassis = getVal(() => item.chassis_number || veh.chassis_no || signzy.chassis, "NA");
+      const engine = getVal(() => item.engine_number || veh.engine_no || signzy.engine, "NA");
+      const address = getVal(() => cust.communication_address.address_line || signzy.presentAddress || signzy.permanentAddress, "NA");
+      const cc = getVal(() => signzy.vehicleCubicCapacity ? `${signzy.vehicleCubicCapacity} cc` : null, "NA");
+      
+      const mfgMonth = getVal(() => item.manufactured_month || signzy.vehicleManufacturingMonthYear, null);
+      const mfgYear = getVal(() => item.manufactured_year, null);
+      let mfg = "NA";
+      if (mfgMonth && mfgYear) mfg = `${mfgMonth}/${mfgYear}`;
+      else if (signzy?.vehicleManufacturingMonthYear) mfg = signzy.vehicleManufacturingMonthYear;
+
+      const colour = getVal(() => veh.vehicle_color || signzy.vehicleColour, "NA");
+      const weight = getVal(() => signzy.unladenWeight ? `${signzy.unladenWeight} kg` : null, "NA");
+      
+      const isFinanced = getVal(() => veh.is_vehicle_financed, false);
+      const financerName = getVal(() => signzy.rcFinancer, "");
+      let financedStatus = "NO";
+      if (isFinanced || financerName) {
+        financedStatus = financerName ? `YES (${financerName})` : "YES";
+      }
+
+      const rto = getVal(() => signzy.regAuthority || item.rb_rto_code, "NA");
+      const rcValid = getVal(() => signzy.rcExpiryDate, "NA");
+      const status = getVal(() => signzy.status, "ACTIVE");
+      const classType = getVal(() => signzy.class || veh.vehicle_type, "VEHICLE");
+
+      // Set Header Data
+      document.getElementById("resRegNo").innerText = regNo;
+      document.getElementById("resStatusBadge").innerHTML = `<span class="w-2 h-2 rounded-full ${status === 'ACTIVE' ? 'bg-emerald-400' : 'bg-rose-400'}"></span> ${status}`;
+      document.getElementById("resCategoryBadge").innerText = classType.toUpperCase();
+
+      // Populate Cards
+      document.getElementById("cardOwner").innerText = owner;
+      document.getElementById("cardRegDate").innerText = regDate;
+      document.getElementById("cardChassis").innerText = chassis;
+      document.getElementById("cardEngine").innerText = engine;
+      document.getElementById("cardAddress").innerText = address;
+      document.getElementById("cardAddress").title = address;
+      document.getElementById("cardCC").innerText = cc;
+      document.getElementById("cardMfg").innerText = mfg;
+      document.getElementById("cardColour").innerText = colour;
+      document.getElementById("cardWeight").innerText = weight;
+      document.getElementById("cardFinanced").innerText = financedStatus;
+      document.getElementById("cardRTO").innerText = rto;
+      document.getElementById("cardRCValid").innerText = rcValid;
+
+      // Show Results
+      document.getElementById("resultsSection").classList.remove("hidden");
+    }
+
+    // --- RECHARGE & UPI QR GENERATION ---
+    function openRechargeModal() {
+      document.getElementById("rechargeModal").classList.remove("hidden");
+      document.getElementById("qrArea").classList.add("hidden");
+    }
+
+    function closeRechargeModal() {
+      document.getElementById("rechargeModal").classList.add("hidden");
+      clearInterval(timerInterval);
+    }
+
+    function openInsufficientModal() {
+      document.getElementById("insufficientModal").classList.remove("hidden");
+    }
+
+    function closeInsufficientModal() {
+      document.getElementById("insufficientModal").classList.add("hidden");
+    }
+
+    function selectAmount(amount) {
+      if (amount < 70) {
+        showToast("Minimum transaction amount is ₹70", "error");
+        return;
+      }
+
+      document.getElementById("selectedAmountDisplay").innerText = `₹${amount}`;
+      
+      // Dynamic UPI Intent String
+      const upiString = `upi://pay?pa=${TARGET_UPI}&pn=Elite%20Vehicle%20Desk&am=${amount}&cu=INR`;
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
+
+      document.getElementById("qrImage").src = qrApiUrl;
+
+      // Prepare WhatsApp Link with preset message
+      const waMsg = encodeURIComponent(`Hello, I have paid ₹${amount} for Elite Vehicle Desk. Here is my payment screenshot.`);
+      document.getElementById("whatsappBtn").href = `https://wa.me/${TARGET_PHONE}?text=${waMsg}`;
+
+      // Show QR Area & Start Timer
+      document.getElementById("qrArea").classList.remove("hidden");
+      startTimer(240); // 4 minutes timer
+    }
+
+    function startTimer(duration) {
+      clearInterval(timerInterval);
+      let timer = duration;
+
+      const timerDisplay = document.getElementById("qrTimer");
+
+      timerInterval = setInterval(() => {
+        let minutes = parseInt(timer / 60, 10);
+        let seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        timerDisplay.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+          clearInterval(timerInterval);
+          timerDisplay.textContent = "EXPIRED";
+          showToast("QR Code expired. Please generate a new one.", "error");
+        }
+      }, 1000);
+    }
+
+    // --- UI TOAST NOTIFICATION ---
+    function showToast(message, type = "info") {
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toastMsg");
+      const toastIcon = document.getElementById("toastIcon");
+
+      toastMsg.innerText = message;
+
+      if (type === "success") {
+        toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
+      } else if (type === "error") {
+        toastIcon.className = "fa-solid fa-circle-xmark text-rose-400";
+      } else {
+        toastIcon.className = "fa-solid fa-circle-info text-sky-400";
+      }
+
+      toast.classList.remove("translate-y-20", "opacity-0");
+      
+      setTimeout(() => {
+        toast.classList.add("translate-y-20", "opacity-0");
+      }, 3500);
+    }
+  </script>
 </body>
 </html>
