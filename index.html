@@ -134,13 +134,14 @@
           <div class="absolute left-4 z-10 text-slate-400 pointer-events-none">
             <i data-lucide="car" class="w-6 h-6"></i>
           </div>
+          <!-- TEXT LEFT ALIGNED FIX -->
           <input 
             type="text" 
             id="reg-input" 
             placeholder="e.g. UP32XX1234 or DL01AB9999"
             maxlength="13"
             required
-            class="w-full bg-slate-900/90 text-white placeholder-slate-500 text-lg font-mono tracking-wider font-semibold text-center pl-14 pr-36 py-4 rounded-xl border border-slate-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 outline-none transition-all uppercase"
+            class="w-full bg-slate-900/90 text-white placeholder-slate-500 text-lg font-mono tracking-wider font-semibold text-left pl-14 pr-36 py-4 rounded-xl border border-slate-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 outline-none transition-all uppercase"
           />
           <div class="absolute right-2 z-10 flex items-center space-x-2">
             <button 
@@ -441,13 +442,15 @@
   <!-- APPLICATION LOGIC JS -->
   <script>
     // -------------------------------------------------------------
-    // 1. REAL-TIME CLOUD FIREBASE SYNC (PC <-> MOBILE REALTIME)
+    // 1. DUAL-SYNC CLOUD FIREBASE + LOCAL DB ENGINE
     // -------------------------------------------------------------
     const firebaseConfig = {
       databaseURL: "https://elite-vehicle-desk-default-rtdb.asia-southeast1.firebasedatabase.app"
     };
 
-    let userPoints = 0;
+    let userPoints = parseInt(localStorage.getItem('evd_points'), 10);
+    if (isNaN(userPoints)) userPoints = 10; // Default fallback
+
     let qrTimerInterval = null;
     let qrTimeRemaining = 240;
     let logoClickCount = 0;
@@ -455,38 +458,50 @@
     let dbRef = null;
 
     function initFirebaseCloudWallet() {
+      // Immediate initial local display
+      updatePointsDisplay();
+
       try {
         if (!firebase.apps.length) {
           firebase.initializeApp(firebaseConfig);
         }
         dbRef = firebase.database().ref('global_wallet/points');
 
-        // Realtime Listener across all connected devices (PC, Mobile, New Devices)
+        // Realtime Listener across PC, Mobile & New devices
         dbRef.on('value', (snapshot) => {
           const val = snapshot.val();
-          if (val === null) {
-            dbRef.set(10); // Default Starting Balance if empty
-            userPoints = 10;
+          if (val === null || val === undefined) {
+            dbRef.set(userPoints);
           } else {
             userPoints = parseInt(val, 10) || 0;
+            localStorage.setItem('evd_points', userPoints);
           }
+          updatePointsDisplay();
+        }, (err) => {
+          console.warn("Firebase fallback active:", err);
           updatePointsDisplay();
         });
       } catch (err) {
-        console.error("Cloud DB Connection Error:", err);
+        console.warn("Firebase Init fallback:", err);
+        updatePointsDisplay();
       }
     }
 
     function updatePointsDisplay() {
-      document.getElementById('points-display').textContent = userPoints;
+      const displayElem = document.getElementById('points-display');
+      if (displayElem) {
+        displayElem.textContent = userPoints;
+      }
     }
 
     function setWalletPoints(val) {
-      userPoints = Math.max(0, val);
-      if (dbRef) {
-        dbRef.set(userPoints); // Instant Sync to Cloud DB
-      }
+      userPoints = Math.max(0, parseInt(val, 10) || 0);
+      localStorage.setItem('evd_points', userPoints);
       updatePointsDisplay();
+
+      if (dbRef) {
+        dbRef.set(userPoints).catch(err => console.warn("Cloud save error:", err));
+      }
     }
 
     function deductPoint() {
