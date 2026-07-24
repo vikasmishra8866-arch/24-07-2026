@@ -470,15 +470,43 @@
       <!-- Admin Actions State -->
       <div id="admin-action-view" class="space-y-4 hidden">
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Set Wallet Points Balance</label>
+          <label class="text-xs text-slate-400 block mb-1">Set Total Points Balance Directly</label>
           <input 
             type="number" 
             id="admin-points-input" 
-            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white font-bold text-lg focus:border-emerald-500 outline-none"
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white font-bold text-lg focus:border-emerald-500 outline-none mb-2"
           />
         </div>
-        <button onclick="saveAdminPoints()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-2.5 rounded-xl text-sm shadow-lg transition-all">
-          Save & Update Points
+
+        <!-- Dropdown Option for Quick Select -->
+        <div class="space-y-1">
+          <label class="text-xs text-slate-400 block">Select Quick Point Target (Dropdown):</label>
+          <select id="admin-dropdown-select" onchange="applyDropdownPoints(this.value)" class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-bold rounded-xl px-3 py-2 text-sm focus:border-emerald-500 outline-none">
+            <option value="">-- Choose Preset Points --</option>
+            <option value="10">Set 10 Points</option>
+            <option value="15">Set 15 Points</option>
+            <option value="20">Set 20 Points</option>
+            <option value="25">Set 25 Points</option>
+            <option value="50">Set 50 Points</option>
+            <option value="100">Set 100 Points</option>
+          </select>
+        </div>
+
+        <!-- Add Extra Points Buttons -->
+        <div class="space-y-1.5 pt-1">
+          <label class="text-xs text-slate-400 block">Add Extra Points to Current Balance:</label>
+          <div class="grid grid-cols-3 gap-1.5">
+            <button onclick="addExtraPoints(5)" class="bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 text-emerald-400 text-xs font-bold py-1.5 rounded-lg transition-all">+5 Pts</button>
+            <button onclick="addExtraPoints(10)" class="bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 text-emerald-400 text-xs font-bold py-1.5 rounded-lg transition-all">+10 Pts</button>
+            <button onclick="addExtraPoints(15)" class="bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 text-emerald-400 text-xs font-bold py-1.5 rounded-lg transition-all">+15 Pts</button>
+            <button onclick="addExtraPoints(20)" class="bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 text-emerald-400 text-xs font-bold py-1.5 rounded-lg transition-all">+20 Pts</button>
+            <button onclick="addExtraPoints(25)" class="bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 text-emerald-400 text-xs font-bold py-1.5 rounded-lg transition-all">+25 Pts</button>
+            <button onclick="addExtraPoints(50)" class="bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 text-emerald-400 text-xs font-bold py-1.5 rounded-lg transition-all">+50 Pts</button>
+          </div>
+        </div>
+
+        <button onclick="saveAdminPoints()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-2.5 rounded-xl text-sm shadow-lg transition-all mt-2">
+          Save & Update Balance
         </button>
       </div>
 
@@ -495,7 +523,7 @@
   <!-- APPLICATION LOGIC JS -->
   <script>
     // -------------------------------------------------------------
-    // 1. STATE & WALLET MANAGEMENT
+    // 1. STATE & WALLET MANAGEMENT WITH LIVE CROSS-TAB SYNC
     // -------------------------------------------------------------
     const WALLET_KEY = 'evd_points';
     let userPoints = 0;
@@ -533,14 +561,21 @@
       return false;
     }
 
+    // Live Cross-Tab / Cross-Window Sync Fix
+    window.addEventListener('storage', (event) => {
+      if (event.key === WALLET_KEY) {
+        userPoints = parseInt(event.newValue, 10) || 0;
+        updatePointsDisplay();
+        showToast('Wallet balance synced in real-time!', 'success');
+      }
+    });
+
     // -------------------------------------------------------------
     // 2. INPUT AUTO-FORMATTING
     // -------------------------------------------------------------
     const regInput = document.getElementById('reg-input');
     regInput.addEventListener('input', function(e) {
-      let cursorPosition = this.selectionStart;
       let raw = this.value;
-      // Strip spaces, hyphens, and non-alphanumeric characters, convert to UPPERCASE
       let cleaned = raw.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
       this.value = cleaned;
     });
@@ -645,9 +680,21 @@
         document.getElementById('admin-passcode-view').classList.add('hidden');
         document.getElementById('admin-action-view').classList.remove('hidden');
         document.getElementById('admin-points-input').value = userPoints;
+        document.getElementById('admin-dropdown-select').value = "";
       } else {
         alert('Incorrect Admin Passcode');
       }
+    }
+
+    function applyDropdownPoints(val) {
+      if (val) {
+        document.getElementById('admin-points-input').value = parseInt(val, 10);
+      }
+    }
+
+    function addExtraPoints(extra) {
+      const currentVal = parseInt(document.getElementById('admin-points-input').value, 10) || 0;
+      document.getElementById('admin-points-input').value = currentVal + extra;
     }
 
     function saveAdminPoints() {
