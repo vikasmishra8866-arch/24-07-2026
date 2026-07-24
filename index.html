@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,15 +13,10 @@
       theme: {
         extend: {
           colors: {
-            emerald: {
-              400: '#34d399',
+            brand: {
               500: '#10b981',
               600: '#059669',
-              900: '#064e3b',
-            },
-            slate: {
-              850: '#0f172a',
-              900: '#090d16',
+              700: '#047857',
             }
           }
         }
@@ -32,19 +27,19 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Custom Styles for Glassmorphism & Animations -->
+  <!-- Glassmorphism Custom Styles -->
   <style>
     body {
-      background-color: #0b1120;
+      background-color: #0f172a;
       background-image: 
-        radial-gradient(at 10% 10%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
-        radial-gradient(at 90% 90%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.12) 0px, transparent 50%);
       background-attachment: fixed;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     }
 
     .glass-card {
-      background: rgba(15, 23, 42, 0.65);
+      background: rgba(30, 41, 59, 0.65);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -55,15 +50,19 @@
       background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .glow-emerald {
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+    .text-gradient {
+      background: linear-gradient(135deg, #34d399 0%, #3b82f6 50%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .glow-emerald-lg {
-      box-shadow: 0 0 35px rgba(16, 185, 129, 0.35);
+    .text-gradient-gold {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     /* Custom Scrollbar */
@@ -82,593 +81,633 @@
     }
   </style>
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-slate-900">
-
-  <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80 px-4 py-3 sm:px-8">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      
-      <!-- Logo with Secret Admin Trigger -->
-      <div 
-        id="logo-trigger" 
-        class="flex items-center space-x-3 cursor-pointer select-none group"
-        title="Triple click / Tap 5 times"
-      >
-        <div class="p-2.5 rounded-xl bg-gradient-to-tr from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 group-hover:border-emerald-400 transition-all duration-300 glow-emerald">
-          <i data-lucide="shield-check" class="w-6 h-6 text-emerald-400"></i>
-        </div>
-        <div>
-          <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-100 via-slate-200 to-emerald-400">
-            Elite Vehicle Desk
-          </h1>
-          <p class="text-[10px] text-slate-400 tracking-wider font-mono uppercase">Vahan Intelligence Suite</p>
-        </div>
-      </div>
-
-      <!-- Wallet Points Badge & Recharge Button -->
-      <div class="flex items-center space-x-3">
-        <div class="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/60 shadow-inner">
-          <i data-lucide="coins" class="w-4 h-4 text-emerald-400 animate-pulse"></i>
-          <span class="text-xs text-slate-400 font-medium">Points:</span>
-          <span id="points-counter" class="text-sm font-bold font-mono text-emerald-400">1</span>
-        </div>
-        
-        <button 
-          id="btn-open-recharge"
-          class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs transition-all duration-200 shadow-md shadow-emerald-500/20 active:scale-95"
-        >
-          <i data-lucide="plus-circle" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">Add Balance</span>
-        </button>
-      </div>
-
-    </div>
-  </header>
-
-  <!-- TOAST ALERT CONTAINER -->
-  <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col space-y-2 max-w-sm w-full pointer-events-none"></div>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
 
   <!-- MAIN CONTAINER -->
-  <main class="max-w-5xl mx-auto w-full px-4 py-8 flex-grow space-y-8">
+  <div class="w-full max-w-5xl mx-auto px-4 py-6 flex-grow flex flex-col">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="glass-card rounded-2xl p-4 mb-6 flex flex-wrap items-center justify-between gap-4 border-emerald-500/20">
+      <!-- Logo Trigger for Secret Admin Panel -->
+      <div id="logoTrigger" class="flex items-center gap-3 cursor-pointer select-none group" title="Click 5 times rapidly for admin settings">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+          <i data-lucide="shield-check" class="w-6 h-6 text-slate-950 font-bold"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-black tracking-wider uppercase text-slate-100 flex items-center gap-2">
+            Elite Vehicle Desk
+          </h1>
+          <p class="text-xs text-slate-400 font-medium">Instant RC & Owner Intelligence</p>
+        </div>
+      </div>
+
+      <!-- Wallet Balance Counter -->
+      <div class="flex items-center gap-3">
+        <div class="glass-card px-4 py-2 rounded-xl flex items-center gap-2.5 border-emerald-500/30">
+          <i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i>
+          <span class="text-xs text-slate-400 font-medium">Balance:</span>
+          <span id="pointsBadge" class="text-lg font-bold text-emerald-400 font-mono">1</span>
+          <span class="text-xs text-slate-400 font-semibold">PTS</span>
+        </div>
+        <button onclick="openRechargeModal()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold text-sm px-4 py-2 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-1.5">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>Recharge</span>
+        </button>
+      </div>
+    </header>
 
     <!-- SEARCH HERO CARD -->
-    <section class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden">
-      <div class="absolute -top-24 -right-24 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      
-      <div class="max-w-2xl mx-auto text-center space-y-4">
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight">
-          Vehicle RC Search & Details
-        </h2>
-        <p class="text-sm text-slate-400">
-          Enter any Indian vehicle registration number (e.g., UP32XX1234 or DL01AB1234)
-        </p>
+    <section class="glass-card rounded-2xl p-6 mb-8 relative overflow-hidden">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-2xl sm:text-3xl font-extrabold mb-2 text-gradient">Vehicle Information Search</h2>
+        <p class="text-slate-400 text-sm mb-6">Enter any Indian Vehicle Registration Number to retrieve official RC specs, ownership history, and compliance status.</p>
 
         <!-- Search Input Form -->
-        <form id="search-form" onsubmit="handleSearch(event)" class="mt-6 flex flex-col sm:flex-row items-center gap-3">
+        <div class="relative flex flex-col sm:flex-row items-center gap-3">
           <div class="relative w-full">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
               <i data-lucide="car" class="w-5 h-5"></i>
             </div>
             <input 
               type="text" 
-              id="reg-input"
-              placeholder="MH12AB1234" 
-              maxlength="15"
-              required
-              class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-slate-100 font-mono text-base font-semibold placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all uppercase tracking-wider"
+              id="vehicleInput"
+              placeholder="e.g. MH01AE1234 or UP32XX9999" 
+              maxlength="13"
+              class="w-full pl-11 pr-4 py-3.5 bg-slate-900/80 border border-slate-700/60 rounded-xl text-lg font-mono tracking-wider font-bold text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 uppercase transition-all shadow-inner"
               oninput="formatInput(this)"
+              onkeydown="if(event.key === 'Enter') handleSearch()"
             />
           </div>
 
           <button 
-            type="submit" 
-            id="btn-search"
-            class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm tracking-wide transition-all duration-200 flex items-center justify-center space-x-2 shrink-0 shadow-lg shadow-emerald-500/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            id="searchBtn"
+            onclick="handleSearch()"
+            class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black text-base rounded-xl transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 whitespace-nowrap min-w-[160px]"
           >
-            <i data-lucide="search" id="search-icon" class="w-4 h-4"></i>
-            <span id="search-btn-text">Search Vehicle</span>
+            <i data-lucide="search" class="w-5 h-5"></i>
+            <span>Fetch Details</span>
           </button>
-        </form>
+        </div>
         
-        <p class="text-[11px] text-slate-500 flex items-center justify-center gap-1 font-mono">
-          <i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
-          1 Search = 1 Wallet Point Deduction
+        <p class="text-xs text-slate-500 mt-3 flex items-center justify-center gap-1">
+          <i data-lucide="info" class="w-3.5 h-3.5"></i>
+          1 Search = 1 Point. Automatic space/hyphen removal enabled.
         </p>
       </div>
     </section>
 
-    <!-- LOADING STATE -->
-    <div id="loading-state" class="hidden glass-card rounded-2xl p-12 text-center space-y-4">
-      <div class="relative inline-flex items-center justify-center">
-        <div class="w-16 h-16 border-4 border-emerald-500/20 border-t-emerald-400 rounded-full animate-spin"></div>
-        <i data-lucide="car" class="w-6 h-6 text-emerald-400 absolute"></i>
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-slate-200">Fetching Vehicle Details...</h3>
-        <p class="text-xs text-slate-400 mt-1">Accessing encrypted registry databases</p>
-      </div>
-    </div>
+    <!-- TOAST NOTIFICATIONS AREA -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
 
-    <!-- NO DATA WARNING STATE -->
-    <div id="no-data-state" class="hidden glass-card rounded-2xl p-8 border-amber-500/30 bg-amber-950/10 text-center space-y-4">
-      <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-full w-14 h-14 flex items-center justify-center mx-auto text-amber-400 glow-amber">
-        <i data-lucide="alert-triangle" class="w-8 h-8"></i>
-      </div>
-      <div class="space-y-1">
-        <h3 class="text-xl font-bold text-amber-200">No Vehicle Records Found</h3>
-        <p class="text-sm text-slate-400 max-w-md mx-auto">
-          We couldn't locate details for this registration number. Please check the vehicle number and try again.
-        </p>
-      </div>
-    </div>
+    <!-- RESULTS DISPLAY SECTION -->
+    <main id="resultsContainer" class="hidden flex-grow space-y-6">
 
-    <!-- RESULTS SECTION -->
-    <div id="results-container" class="hidden space-y-6">
-
-      <!-- 🔵 HERO BANNER CARD -->
-      <div class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden border-emerald-500/30 glow-emerald">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div class="space-y-2">
-            <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-wider">
-              Registration Verified
+      <!-- HERO BANNER CARD -->
+      <div class="glass-card rounded-2xl p-6 border-l-4 border-l-emerald-400 relative overflow-hidden bg-gradient-to-r from-slate-900/90 via-slate-800/60 to-slate-900/90 shadow-2xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+          <div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Verified Vehicle Record
             </span>
-            <h2 id="hero-maker-model" class="text-2xl sm:text-3xl font-black text-slate-100 uppercase tracking-tight">
-              VEHICLE DETAILS
+            <!-- MAKER AND MODEL HEADING WITH HIGH-IMPACT GRADIENT -->
+            <h2 id="heroMakerModel" class="text-2xl sm:text-4xl font-black tracking-tight text-gradient-gold drop-shadow-md">
+              NA
             </h2>
-            <div class="flex flex-wrap gap-2 text-xs font-medium text-slate-300 pt-1">
-              <span class="flex items-center gap-1 bg-slate-900/60 px-2.5 py-1 rounded-lg border border-slate-700/50">
-                <i data-lucide="fuel" class="w-3.5 h-3.5 text-emerald-400"></i>
-                <span id="hero-fuel">NA</span>
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-2 text-slate-300 text-sm">
+              <span class="flex items-center gap-1.5">
+                <i data-lucide="fuel" class="w-4 h-4 text-cyan-400"></i>
+                Fuel Type: <strong id="heroFuel" class="text-slate-100 font-semibold">NA</strong>
               </span>
-              <span class="flex items-center gap-1 bg-slate-900/60 px-2.5 py-1 rounded-lg border border-slate-700/50">
-                <i data-lucide="gauge" class="w-3.5 h-3.5 text-teal-400"></i>
-                <span id="hero-norms">NA</span>
+              <span class="flex items-center gap-1.5">
+                <i data-lucide="gauge" class="w-4 h-4 text-emerald-400"></i>
+                Norms: <strong id="heroNorms" class="text-slate-100 font-semibold">NA</strong>
               </span>
             </div>
           </div>
-
-          <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-center sm:text-right shrink-0">
-            <span class="text-[10px] text-slate-400 block font-mono uppercase">Registration No.</span>
-            <span id="hero-reg-no" class="text-xl font-mono font-bold text-emerald-400 tracking-wider">MH12AB1234</span>
+          <div class="bg-slate-950/80 px-5 py-3 rounded-xl border border-slate-800 text-center md:text-right">
+            <span class="text-xs text-slate-500 uppercase tracking-widest font-semibold block">Registration No</span>
+            <span id="heroRegNo" class="text-xl sm:text-2xl font-mono font-black text-emerald-400 tracking-wider">NA</span>
           </div>
         </div>
       </div>
 
-      <!-- GRID FOR DETAILED SECTIONS -->
+      <!-- DETAILS GRID -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        <!-- 📦 SECTION BOX 1: Owner Details -->
-        <div class="glass-card rounded-2xl p-6 space-y-4">
-          <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
-            <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <i data-lucide="user" class="w-5 h-5"></i>
+        <!-- BOX 1: OWNER DETAILS -->
+        <div class="glass-card rounded-2xl p-5 hover:border-slate-700 transition-colors">
+          <div class="flex items-center gap-2.5 pb-3 border-b border-slate-700/60 mb-4 text-emerald-400">
+            <i data-lucide="user-check" class="w-5 h-5"></i>
+            <h3 class="font-bold text-slate-100 tracking-wide uppercase text-sm">1. Owner Details</h3>
+          </div>
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between items-center py-1">
+              <span class="text-slate-400">Owner Name</span>
+              <span id="resOwnerName" class="font-bold text-slate-100 text-right">NA</span>
             </div>
-            <h3 class="font-bold text-slate-200">Owner Details</h3>
+            <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+              <span class="text-slate-400">Father / Nominee Name</span>
+              <span id="resFatherName" class="font-medium text-slate-200 text-right">NA</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+              <span class="text-slate-400">Owner Count / Serial</span>
+              <span id="resOwnerCount" class="font-medium text-emerald-400 font-mono text-right">NA</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOX 2: ADDRESS DETAILS -->
+        <div class="glass-card rounded-2xl p-5 hover:border-slate-700 transition-colors">
+          <div class="flex items-center gap-2.5 pb-3 border-b border-slate-700/60 mb-4 text-cyan-400">
+            <i data-lucide="map-pin" class="w-5 h-5"></i>
+            <h3 class="font-bold text-slate-100 tracking-wide uppercase text-sm">2. Address Details</h3>
           </div>
           <div class="space-y-3 text-sm">
             <div>
-              <span class="text-xs text-slate-400 block">Owner Name</span>
-              <span id="val-owner-name" class="font-semibold text-slate-100 uppercase">NA</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2 pt-1">
-              <div>
-                <span class="text-xs text-slate-400 block">Father Name</span>
-                <span id="val-father-name" class="font-medium text-slate-200 uppercase">NA</span>
-              </div>
-              <div>
-                <span class="text-xs text-slate-400 block">Owner Serial Count</span>
-                <span id="val-owner-count" class="font-medium text-slate-200">NA</span>
-              </div>
+              <span class="text-slate-400 text-xs uppercase tracking-wider block mb-1">Registered / Present Address</span>
+              <p id="resAddress" class="font-medium text-slate-200 leading-relaxed bg-slate-900/50 p-3 rounded-lg border border-slate-800/80">NA</p>
             </div>
           </div>
         </div>
 
-        <!-- 📦 SECTION BOX 2: Address Details -->
-        <div class="glass-card rounded-2xl p-6 space-y-4">
-          <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
-            <div class="p-2 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/20">
-              <i data-lucide="map-pin" class="w-5 h-5"></i>
-            </div>
-            <h3 class="font-bold text-slate-200">Address Details</h3>
+        <!-- BOX 3: TECHNICAL SPECIFICATIONS -->
+        <div class="glass-card rounded-2xl p-5 hover:border-slate-700 transition-colors">
+          <div class="flex items-center gap-2.5 pb-3 border-b border-slate-700/60 mb-4 text-indigo-400">
+            <i data-lucide="cpu" class="w-5 h-5"></i>
+            <h3 class="font-bold text-slate-100 tracking-wide uppercase text-sm">3. Technical Specs</h3>
           </div>
           <div class="space-y-3 text-sm">
-            <div>
-              <span class="text-xs text-slate-400 block">Registered Address</span>
-              <p id="val-address" class="font-medium text-slate-200 leading-relaxed capitalize">NA</p>
+            <div class="flex justify-between items-center py-1">
+              <span class="text-slate-400">Chassis Number</span>
+              <span id="resChassis" class="font-mono font-bold text-slate-100 text-right">NA</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+              <span class="text-slate-400">Engine Number</span>
+              <span id="resEngine" class="font-mono font-bold text-slate-100 text-right">NA</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+              <span class="text-slate-400">Cubic Capacity (CC)</span>
+              <span id="resCC" class="font-medium text-slate-200 text-right">NA</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+              <span class="text-slate-400">Mfg Month / Year</span>
+              <span id="resMfgDate" class="font-medium text-slate-200 text-right">NA</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+              <span class="text-slate-400">Vehicle Colour</span>
+              <span id="resColor" class="font-medium text-slate-200 text-right">NA</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+              <span class="text-slate-400">Unladen Weight</span>
+              <span id="resWeight" class="font-medium text-slate-200 text-right">NA</span>
             </div>
           </div>
         </div>
 
-        <!-- 📦 SECTION BOX 3: Technical Specifications -->
-        <div class="glass-card rounded-2xl p-6 space-y-4 md:col-span-2">
-          <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
-            <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-              <i data-lucide="wrench" class="w-5 h-5"></i>
-            </div>
-            <h3 class="font-bold text-slate-200">Technical Specifications</h3>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-            <div>
-              <span class="text-xs text-slate-400 block">Chassis Number</span>
-              <span id="val-chassis" class="font-mono font-semibold text-slate-200 uppercase">NA</span>
-            </div>
-            <div>
-              <span class="text-xs text-slate-400 block">Engine Number</span>
-              <span id="val-engine" class="font-mono font-semibold text-slate-200 uppercase">NA</span>
-            </div>
-            <div>
-              <span class="text-xs text-slate-400 block">Engine Capacity (CC)</span>
-              <span id="val-cc" class="font-medium text-slate-200">NA</span>
-            </div>
-            <div>
-              <span class="text-xs text-slate-400 block">Mfg Month / Year</span>
-              <span id="val-mfg-date" class="font-medium text-slate-200">NA</span>
-            </div>
-            <div>
-              <span class="text-xs text-slate-400 block">Vehicle Colour</span>
-              <span id="val-color" class="font-medium text-slate-200 capitalize">NA</span>
-            </div>
-            <div>
-              <span class="text-xs text-slate-400 block">Unladen Weight</span>
-              <span id="val-weight" class="font-medium text-slate-200">NA</span>
-            </div>
-          </div>
-        </div>
+        <!-- BOX 4 & 5 SPLIT COLUMN -->
+        <div class="space-y-6">
 
-        <!-- 📦 SECTION BOX 4: Finance Status -->
-        <div class="glass-card rounded-2xl p-6 space-y-4">
-          <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
-            <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <!-- BOX 4: FINANCE STATUS -->
+          <div class="glass-card rounded-2xl p-5 hover:border-slate-700 transition-colors">
+            <div class="flex items-center gap-2.5 pb-3 border-b border-slate-700/60 mb-4 text-amber-400">
               <i data-lucide="landmark" class="w-5 h-5"></i>
+              <h3 class="font-bold text-slate-100 tracking-wide uppercase text-sm">4. Finance Status</h3>
             </div>
-            <h3 class="font-bold text-slate-200">Finance Status</h3>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between items-center py-1">
+                <span class="text-slate-400">Finance Status</span>
+                <span id="resFinanceStatus" class="px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider bg-slate-800 text-slate-300">NA</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+                <span class="text-slate-400">Financer / Bank Name</span>
+                <span id="resFinancer" class="font-medium text-slate-200 text-right">NA</span>
+              </div>
+            </div>
           </div>
-          <div class="space-y-3 text-sm">
-            <div>
-              <span class="text-xs text-slate-400 block">Status</span>
-              <span id="val-finance-status" class="inline-block mt-1 px-2.5 py-1 rounded text-xs font-bold bg-slate-800 text-slate-300">NA</span>
-            </div>
-            <div>
-              <span class="text-xs text-slate-400 block">Financer / Bank Name</span>
-              <span id="val-financer" class="font-medium text-slate-200 uppercase">NA</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- 📦 SECTION BOX 5: RC & Compliance Details -->
-        <div class="glass-card rounded-2xl p-6 space-y-4">
-          <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
-            <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+          <!-- BOX 5: RC & COMPLIANCE -->
+          <div class="glass-card rounded-2xl p-5 hover:border-slate-700 transition-colors">
+            <div class="flex items-center gap-2.5 pb-3 border-b border-slate-700/60 mb-4 text-rose-400">
               <i data-lucide="file-check" class="w-5 h-5"></i>
+              <h3 class="font-bold text-slate-100 tracking-wide uppercase text-sm">5. RC & Compliance</h3>
             </div>
-            <h3 class="font-bold text-slate-200">RC & Compliance</h3>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between items-center py-1">
+                <span class="text-slate-400">Registering Authority (RTO)</span>
+                <span id="resRTO" class="font-medium text-slate-200 text-right">NA</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+                <span class="text-slate-400">Registration Date</span>
+                <span id="resRegDate" class="font-medium text-slate-200 text-right">NA</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+                <span class="text-slate-400">RC Valid Upto</span>
+                <span id="resRcExpiry" class="font-medium text-emerald-400 font-mono text-right">NA</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-t border-slate-800/80">
+                <span class="text-slate-400">Tax Valid Upto</span>
+                <span id="resTaxExpiry" class="font-medium text-slate-200 text-right">NA</span>
+              </div>
+            </div>
           </div>
-          <div class="grid grid-cols-2 gap-3 text-sm">
-            <div class="col-span-2">
-              <span class="text-xs text-slate-400 block">Registration Authority (RTO)</span>
-              <span id="val-rto" class="font-medium text-slate-200 capitalize">NA</span>
-            </div>
-            <div>
-              <span class="text-xs text-slate-400 block">Registration Date</span>
-              <span id="val-reg-date" class="font-medium text-slate-200">NA</span>
-            </div>
-            <div>
-              <span class="text-xs text-slate-400 block">RC Valid Upto</span>
-              <span id="val-rc-expiry" class="font-medium text-slate-200">NA</span>
-            </div>
-            <div>
-              <span class="text-xs text-slate-400 block">Tax Valid Upto</span>
-              <span id="val-tax-upto" class="font-medium text-slate-200">NA</span>
-            </div>
-          </div>
+
         </div>
 
       </div>
+    </main>
 
-    </div>
+    <!-- NO-DATA WARNING CARD STATE -->
+    <section id="noDataWarning" class="hidden glass-card border-rose-500/40 bg-rose-950/20 rounded-2xl p-8 text-center my-6">
+      <div class="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto mb-4 text-rose-400">
+        <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+      </div>
+      <h3 class="text-xl font-bold text-rose-200 mb-1">No Vehicle Records Found</h3>
+      <p class="text-slate-400 text-sm max-w-md mx-auto">We couldn't retrieve details for this registration number. Please check the input or verify if the API server is online.</p>
+    </section>
 
-  </main>
+  </div>
 
-  <!-- 9. FOOTER -->
-  <footer class="glass-card border-t border-slate-800/80 py-4 px-4 text-center text-xs text-slate-500 font-medium">
-    <p>© All Rights Reserved | Vikas Mishra</p>
+  <!-- FOOTER -->
+  <footer class="w-full text-center py-6 border-t border-slate-800/60 bg-slate-950/50 mt-12">
+    <p class="text-xs text-slate-500 font-medium tracking-wide">
+      © All Rights Reserved | <span class="text-slate-300 font-semibold">Vikas Mishra</span>
+    </p>
   </footer>
 
 
-  <!-- RECHARGE / ADD BALANCE MODAL -->
-  <div id="modal-recharge" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
-    <div class="glass-modal rounded-2xl max-w-md w-full p-6 space-y-6 relative border border-slate-700/60 shadow-2xl animate-in fade-in zoom-in duration-200">
-      
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- RECHARGE & UPI QR MODAL -->
+  <div id="rechargeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
+    <div class="glass-modal rounded-3xl max-w-md w-full p-6 border border-emerald-500/30 shadow-2xl relative">
       <!-- Close Button -->
-      <button 
-        onclick="closeRechargeModal()" 
-        class="absolute top-4 right-4 text-slate-400 hover:text-slate-200 p-1 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition"
-      >
+      <button onclick="closeRechargeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
-      <!-- Modal Title -->
-      <div class="text-center space-y-1">
-        <h3 class="text-xl font-bold text-slate-100 flex items-center justify-center gap-2">
-          <i data-lucide="wallet" class="w-5 h-5 text-emerald-400"></i>
-          Recharge Wallet
-        </h3>
-        <p id="recharge-modal-subtitle" class="text-xs text-slate-400">
-          Scan QR code or click preset amount to pay via UPI
-        </p>
+      <div class="text-center mb-5">
+        <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto mb-3 text-emerald-400">
+          <i data-lucide="qr-code" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-xl font-bold text-slate-100">Recharge Balance</h3>
+        <p class="text-xs text-slate-400 mt-1">Select amount to generate live UPI QR Code</p>
       </div>
 
-      <!-- Preset Buttons -->
-      <div class="grid grid-cols-3 gap-3">
-        <button onclick="selectAmount(70)" class="preset-btn px-3 py-2.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold text-sm transition text-center">
-          ₹70
-        </button>
-        <button onclick="selectAmount(100)" class="preset-btn px-3 py-2.5 rounded-xl border border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-slate-200 font-bold text-sm transition text-center">
-          ₹100
-        </button>
-        <button onclick="selectAmount(150)" class="preset-btn px-3 py-2.5 rounded-xl border border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-slate-200 font-bold text-sm transition text-center">
-          ₹150
-        </button>
+      <!-- Preset Amounts -->
+      <div class="grid grid-cols-3 gap-3 mb-5">
+        <button onclick="selectAmount(70)" class="amount-btn bg-slate-800/80 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500/50 text-slate-200 font-bold py-2.5 rounded-xl transition-all text-sm">₹70</button>
+        <button onclick="selectAmount(100)" class="amount-btn bg-slate-800/80 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500/50 text-slate-200 font-bold py-2.5 rounded-xl transition-all text-sm">₹100</button>
+        <button onclick="selectAmount(150)" class="amount-btn bg-slate-800/80 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500/50 text-slate-200 font-bold py-2.5 rounded-xl transition-all text-sm">₹150</button>
       </div>
 
-      <!-- QR Code Display Area -->
-      <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 flex flex-col items-center space-y-3">
-        <div class="p-2 bg-white rounded-xl shadow-lg">
-          <img id="upi-qr-img" src="" alt="UPI QR Code" class="w-44 h-44 object-contain" />
-        </div>
-        
-        <div class="text-center">
-          <span class="text-xs text-slate-400 block">Target UPI ID</span>
-          <span class="text-xs font-mono font-bold text-emerald-400 select-all">9696159863.wallet@phonepe</span>
-        </div>
-
-        <!-- 4-Minute Countdown Timer -->
-        <div class="flex items-center space-x-2 text-xs font-mono bg-slate-800/80 px-3 py-1 rounded-full text-slate-300">
-          <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400 animate-spin"></i>
-          <span>Expires in: <strong id="qr-timer" class="text-amber-400">04:00</strong></span>
+      <!-- Custom Amount Input -->
+      <div class="mb-5">
+        <label class="block text-xs font-semibold text-slate-400 mb-1">Enter Amount (Min ₹70)</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-bold text-sm">₹</span>
+          <input 
+            type="number" 
+            id="rechargeAmount" 
+            value="70" 
+            min="70" 
+            oninput="updateQR()"
+            class="w-full pl-8 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 font-bold focus:outline-none focus:border-emerald-500 text-sm"
+          />
         </div>
       </div>
 
-      <!-- Direct WhatsApp Confirmation Button -->
-      <a 
-        id="btn-whatsapp"
-        href="#" 
-        target="_blank"
-        class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition flex items-center justify-center space-x-2 shadow-lg shadow-emerald-600/20"
-      >
-        <i data-lucide="message-square" class="w-4 h-4"></i>
-        <span>Confirm Payment on WhatsApp</span>
-      </a>
+      <!-- QR CODE CONTAINER -->
+      <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-center mb-5">
+        <div class="bg-white p-3 rounded-xl inline-block shadow-lg mb-3">
+          <img id="qrImage" src="" alt="UPI QR Code" class="w-44 h-44 object-contain mx-auto" />
+        </div>
+        <div class="flex items-center justify-center gap-2 text-amber-400 text-xs font-mono font-bold">
+          <i data-lucide="clock" class="w-4 h-4"></i>
+          <span>Expires in: <span id="qrTimer">04:00</span></span>
+        </div>
+      </div>
 
+      <!-- Actions -->
+      <div class="space-y-2">
+        <button onclick="sendWhatsAppConfirmation()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-sm rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          <span>Send Payment Proof (WhatsApp)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- NO BALANCE MODAL -->
+  <div id="noBalanceModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
+    <div class="glass-modal rounded-3xl max-w-sm w-full p-6 border border-rose-500/30 text-center shadow-2xl">
+      <div class="w-14 h-14 bg-rose-500/10 border border-rose-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-rose-400">
+        <i data-lucide="alert-circle" class="w-8 h-8"></i>
+      </div>
+      <h3 class="text-xl font-bold text-slate-100 mb-1">Recharge Required</h3>
+      <p class="text-xs text-slate-400 mb-6">Your balance is 0 PTS. Please add funds to execute vehicle searches.</p>
+      
+      <div class="flex gap-3">
+        <button onclick="closeNoBalanceModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm rounded-xl transition-all">Cancel</button>
+        <button onclick="closeNoBalanceModal(); openRechargeModal();" class="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl transition-all shadow-lg shadow-emerald-500/20">Recharge Now</button>
+      </div>
     </div>
   </div>
 
 
   <!-- SECRET ADMIN PANEL MODAL -->
-  <div id="modal-admin-auth" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
-    <div class="glass-modal rounded-2xl max-w-xs w-full p-6 space-y-4 border border-slate-700/60 shadow-2xl">
-      <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
-        <i data-lucide="lock" class="w-5 h-5 text-emerald-400"></i>
-        Admin Authentication
-      </h3>
-      <input 
-        type="password" 
-        id="admin-passcode-input"
-        placeholder="Enter Secret Passcode"
-        class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono text-center text-lg focus:outline-none focus:border-emerald-500"
-      />
-      <div class="flex justify-end space-x-2">
-        <button onclick="closeAdminAuthModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs">Cancel</button>
-        <button onclick="submitAdminPasscode()" class="px-4 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs">Login</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="modal-admin-panel" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
-    <div class="glass-modal rounded-2xl max-w-sm w-full p-6 space-y-6 border border-slate-700/60 shadow-2xl relative">
-      <button 
-        onclick="closeAdminPanelModal()" 
-        class="absolute top-4 right-4 text-slate-400 hover:text-slate-200 p-1 rounded-lg bg-slate-800/50"
-      >
+  <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden">
+    <div class="glass-modal rounded-3xl max-w-sm w-full p-6 border border-cyan-500/30 shadow-2xl relative">
+      <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
-      <div class="space-y-1">
-        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
-          <i data-lucide="sliders" class="w-5 h-5 text-emerald-400"></i>
-          Secret Admin Control
-        </h3>
-        <p class="text-xs text-slate-400">Modify wallet point balance manually</p>
+      <!-- STEP 1: AUTHENTICATION -->
+      <div id="adminAuthStep">
+        <div class="text-center mb-5">
+          <div class="w-12 h-12 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl flex items-center justify-center mx-auto mb-3 text-cyan-400">
+            <i data-lucide="lock" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-100">Secret Admin Panel</h3>
+          <p class="text-xs text-slate-400 mt-1">Enter Security Passcode</p>
+        </div>
+
+        <div class="mb-5">
+          <input 
+            type="password" 
+            id="adminPasscode" 
+            placeholder="Enter passcode" 
+            class="w-full text-center tracking-widest text-lg font-mono px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 focus:outline-none focus:border-cyan-500"
+            onkeydown="if(event.key === 'Enter') verifyAdminPasscode()"
+          />
+        </div>
+
+        <button onclick="verifyAdminPasscode()" class="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm rounded-xl transition-all shadow-lg shadow-cyan-500/20">
+          Unlock Controls
+        </button>
       </div>
 
-      <div class="space-y-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-        <label class="text-xs text-slate-400 block font-medium">Set Wallet Points</label>
-        <div class="flex gap-2">
+      <!-- STEP 2: CONTROL PANEL -->
+      <div id="adminControlStep" class="hidden">
+        <div class="text-center mb-5">
+          <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto mb-3 text-emerald-400">
+            <i data-lucide="sliders" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-100">Wallet Controls</h3>
+          <p class="text-xs text-slate-400 mt-1">Set user points manually</p>
+        </div>
+
+        <div class="mb-5">
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Point Balance</label>
           <input 
             type="number" 
-            id="admin-points-input"
-            value="10" 
-            min="0"
-            class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono text-center font-bold text-base focus:outline-none focus:border-emerald-500"
+            id="adminPointsInput" 
+            class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 font-bold font-mono text-center text-lg focus:outline-none focus:border-emerald-500"
           />
-          <button 
-            onclick="updatePointsFromAdmin()"
-            class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shrink-0 transition"
-          >
-            Save Points
-          </button>
         </div>
+
+        <button onclick="saveAdminPoints()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl transition-all shadow-lg shadow-emerald-500/20">
+          Update Points Balance
+        </button>
       </div>
     </div>
   </div>
 
 
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- ==================== JAVASCRIPT ==================== -->
   <script>
-    // Lucide Icons Initialization
-    lucide.createIcons();
-
-    // STATE VARIABLES
-    const STORAGE_KEY = 'evd_points';
-    const TARGET_UPI = '9696159863.wallet@phonepe';
-    const TARGET_WA_NO = '919696159863';
-    
+    // --- APP STATE & WALLET SYSTEM ---
+    const WALLET_KEY = 'evd_points';
     let currentPoints = 1;
     let qrTimerInterval = null;
-    let activeAmount = 70;
+    let qrTimeRemaining = 240; // 4 Minutes
     let logoClickCount = 0;
     let logoClickTimer = null;
 
-    // 1. INITIALIZATION & WALLET SYSTEM
-    window.addEventListener('DOMContentLoaded', () => {
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
       initWallet();
-      setupLogoTrigger();
+      initLogoTrigger();
+      lucide.createIcons();
     });
 
+    // --- PERMANENT WALLET SYSTEM ---
     function initWallet() {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === null) {
-        currentPoints = 1; // First-time user default
-        localStorage.setItem(STORAGE_KEY, currentPoints);
+      const storedPoints = localStorage.getItem(WALLET_KEY);
+      if (storedPoints === null) {
+        currentPoints = 1; // Default 1 free point
+        localStorage.setItem(WALLET_KEY, currentPoints);
       } else {
-        currentPoints = parseInt(stored, 10) || 0;
+        currentPoints = parseInt(storedPoints, 10) || 0;
       }
-      updatePointsDisplay();
+      updateWalletUI();
     }
 
-    function updatePointsDisplay() {
-      document.getElementById('points-counter').innerText = currentPoints;
+    function updateWalletUI() {
+      const badge = document.getElementById('pointsBadge');
+      if (badge) badge.textContent = currentPoints;
     }
 
     function setPoints(val) {
       currentPoints = Math.max(0, parseInt(val, 10) || 0);
-      localStorage.setItem(STORAGE_KEY, currentPoints);
-      updatePointsDisplay();
+      localStorage.setItem(WALLET_KEY, currentPoints);
+      updateWalletUI();
     }
 
-    // 2. INPUT AUTO-FORMATTING
+    function deductPoint() {
+      if (currentPoints > 0) {
+        setPoints(currentPoints - 1);
+        return true;
+      }
+      return false;
+    }
+
+    // --- SEARCH INPUT FORMATTING ---
     function formatInput(input) {
-      // Strip non-alphanumeric and convert to uppercase
-      input.value = input.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      let cursor = input.selectionStart;
+      let raw = input.value;
+      // Strip non-alphanumeric characters and convert to uppercase
+      let clean = raw.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      input.value = clean;
     }
 
-    // 3. TOAST NOTIFICATIONS
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      
-      let borderCol = 'border-emerald-500/40 bg-slate-900/90 text-slate-100';
-      let icon = 'info';
+    // --- RECHARGE & UPI QR SYSTEM ---
+    function openRechargeModal() {
+      document.getElementById('rechargeModal').classList.remove('hidden');
+      selectAmount(70);
+      startQRTimer();
+    }
 
-      if (type === 'error') {
-        borderCol = 'border-rose-500/40 bg-slate-900/90 text-rose-200';
-        icon = 'alert-circle';
-      } else if (type === 'success') {
-        borderCol = 'border-emerald-500/40 bg-slate-900/90 text-emerald-200';
-        icon = 'check-circle-2';
+    function closeRechargeModal() {
+      document.getElementById('rechargeModal').classList.add('hidden');
+      if (qrTimerInterval) clearInterval(qrTimerInterval);
+    }
+
+    function selectAmount(amt) {
+      document.getElementById('rechargeAmount').value = amt;
+      updateQR();
+    }
+
+    function updateQR() {
+      let amt = parseFloat(document.getElementById('rechargeAmount').value) || 70;
+      if (amt < 70) amt = 70;
+
+      const targetUPI = '9696159863.wallet@phonepe';
+      const upiUrl = `upi://pay?pa=${targetUPI}&pn=EliteVehicleDesk&am=${amt}&cu=INR`;
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(upiUrl)}&size=200x200`;
+
+      document.getElementById('qrImage').src = qrApiUrl;
+    }
+
+    function startQRTimer() {
+      if (qrTimerInterval) clearInterval(qrTimerInterval);
+      qrTimeRemaining = 240; // 4 minutes
+      const timerDisplay = document.getElementById('qrTimer');
+
+      qrTimerInterval = setInterval(() => {
+        qrTimeRemaining--;
+        if (qrTimeRemaining <= 0) {
+          clearInterval(qrTimerInterval);
+          timerDisplay.textContent = "EXPIRED";
+          showToast("QR Code Expired. Please refresh amount.", "error");
+          return;
+        }
+        const m = Math.floor(qrTimeRemaining / 60).toString().padStart(2, '0');
+        const s = (qrTimeRemaining % 60).toString().padStart(2, '0');
+        timerDisplay.textContent = `${m}:${s}`;
+      }, 1000);
+    }
+
+    function sendWhatsAppConfirmation() {
+      const amt = document.getElementById('rechargeAmount').value || '70';
+      const message = encodeURIComponent(`Hello, I have made a payment of ₹${amt} for Elite Vehicle Desk Points. Please approve my balance.`);
+      window.open(`https://wa.me/919696159863?text=${message}`, '_blank');
+    }
+
+    function closeNoBalanceModal() {
+      document.getElementById('noBalanceModal').classList.add('hidden');
+    }
+
+    // --- SECRET ADMIN PANEL ---
+    function initLogoTrigger() {
+      const logo = document.getElementById('logoTrigger');
+      logo.addEventListener('click', () => {
+        logoClickCount++;
+        if (logoClickTimer) clearTimeout(logoClickTimer);
+
+        if (logoClickCount >= 5) {
+          logoClickCount = 0;
+          openAdminModal();
+        } else {
+          logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 1500);
+        }
+      });
+    }
+
+    function openAdminModal() {
+      document.getElementById('adminModal').classList.remove('hidden');
+      document.getElementById('adminAuthStep').classList.remove('hidden');
+      document.getElementById('adminControlStep').classList.add('hidden');
+      document.getElementById('adminPasscode').value = '';
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminModal').classList.add('hidden');
+    }
+
+    function verifyAdminPasscode() {
+      const code = document.getElementById('adminPasscode').value;
+      if (code === '9696') {
+        document.getElementById('adminAuthStep').classList.add('hidden');
+        document.getElementById('adminControlStep').classList.remove('hidden');
+        document.getElementById('adminPointsInput').value = currentPoints;
+        showToast("Admin access granted", "success");
+      } else {
+        showToast("Invalid passcode!", "error");
       }
-
-      toast.className = `p-3.5 rounded-xl border ${borderCol} backdrop-blur-md shadow-xl flex items-center space-x-3 pointer-events-auto animate-in slide-in-from-top-2 duration-300`;
-      toast.innerHTML = `
-        <i data-lucide="${icon}" class="w-5 h-5 shrink-0"></i>
-        <span class="text-xs font-medium">${message}</span>
-      `;
-
-      container.appendChild(toast);
-      lucide.createIcons();
-
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
-        setTimeout(() => toast.remove(), 300);
-      }, 4000);
     }
 
-    // 4. SEARCH & COOLDOWN LOGIC
-    async function handleSearch(e) {
-      e.preventDefault();
+    function saveAdminPoints() {
+      const newPts = document.getElementById('adminPointsInput').value;
+      setPoints(newPts);
+      showToast(`Points balance updated to ${currentPoints}`, "success");
+      closeAdminModal();
+    }
 
-      const input = document.getElementById('reg-input');
-      const rawVal = input.value.trim();
+    // --- SEARCH EXECUTION & API INTEGRATION ---
+    async function handleSearch() {
+      const inputEl = document.getElementById('vehicleInput');
+      const searchBtn = document.getElementById('searchBtn');
+      const cleanRegNo = inputEl.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
 
-      if (!rawVal) {
-        showToast("Please enter a vehicle registration number.", "error");
+      if (!cleanRegNo) {
+        showToast("Please enter a vehicle registration number", "error");
         return;
       }
 
-      // Check Points Balance
+      // Check Wallet Balance
       if (currentPoints <= 0) {
-        showRechargeModal(true);
+        document.getElementById('noBalanceModal').classList.remove('hidden');
         return;
       }
 
-      const cleanRegNo = rawVal.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      // Start 7-Second Cooldown Rule
+      triggerCooldown(searchBtn);
 
-      // UI Transitions
-      setUIState('loading');
-      startSearchCooldown(7);
+      // Hide Old Views
+      document.getElementById('resultsContainer').classList.add('hidden');
+      document.getElementById('noDataWarning').classList.add('hidden');
+
+      showToast("Fetching vehicle details...", "info");
 
       try {
-        const vehicleData = await fetchVehicleData(cleanRegNo);
-
-        if (!vehicleData || Object.keys(vehicleData).length === 0) {
-          setUIState('nodata');
-          showToast("No vehicle records found.", "error");
-        } else {
-          // Deduct 1 Point on Successful Search
-          setPoints(currentPoints - 1);
-          renderVehicleData(vehicleData, cleanRegNo);
-          setUIState('results');
-          showToast("Vehicle details fetched successfully!", "success");
+        const targetObj = await fetchVehicleData(cleanRegNo);
+        
+        if (!targetObj || Object.keys(targetObj).length === 0) {
+          throw new Error("No data returned");
         }
+
+        // Deduct Point on successful search
+        deductPoint();
+
+        // Render Data
+        renderVehicleDetails(targetObj, cleanRegNo);
+        document.getElementById('resultsContainer').classList.remove('hidden');
+        showToast("Vehicle details loaded successfully!", "success");
 
       } catch (err) {
         console.error("Search Error:", err);
-        setUIState('nodata');
-        showToast(err.message || "Failed to retrieve vehicle data.", "error");
+        document.getElementById('noDataWarning').classList.remove('hidden');
+        showToast("Failed to retrieve vehicle details", "error");
       }
     }
 
-    function startSearchCooldown(seconds) {
-      const btn = document.getElementById('btn-search');
-      const btnText = document.getElementById('search-btn-text');
-      const searchIcon = document.getElementById('search-icon');
-
+    // Cooldown Manager (7 Seconds)
+    function triggerCooldown(btn) {
       btn.disabled = true;
       btn.style.pointerEvents = 'none';
-      searchIcon.classList.add('hidden');
+      let remaining = 7;
 
-      let remaining = seconds;
-      btnText.innerText = `Wait ${remaining}s...`;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<i data-lucide="clock" class="w-5 h-5 animate-spin"></i> Wait ${remaining}s...`;
+      lucide.createIcons();
 
-      const timer = setInterval(() => {
+      const cdInterval = setInterval(() => {
         remaining--;
         if (remaining > 0) {
-          btnText.innerText = `Wait ${remaining}s...`;
+          btn.innerHTML = `<i data-lucide="clock" class="w-5 h-5 animate-spin"></i> Wait ${remaining}s...`;
+          lucide.createIcons();
         } else {
-          clearInterval(timer);
+          clearInterval(cdInterval);
           btn.disabled = false;
           btn.style.pointerEvents = 'auto';
-          btnText.innerText = 'Search Vehicle';
-          searchIcon.classList.remove('hidden');
+          btn.innerHTML = originalText;
+          lucide.createIcons();
         }
       }, 1000);
     }
 
-    function setUIState(state) {
-      const loading = document.getElementById('loading-state');
-      const nodata = document.getElementById('no-data-state');
-      const results = document.getElementById('results-container');
-
-      loading.classList.add('hidden');
-      nodata.classList.add('hidden');
-      results.classList.add('hidden');
-
-      if (state === 'loading') loading.classList.remove('hidden');
-      if (state === 'nodata') nodata.classList.remove('hidden');
-      if (state === 'results') results.classList.remove('hidden');
-    }
-
-    // 5. ROBUST API FETCH INTEGRATION & CORS FIX
+    // Robust API Fetch with CORS Fallback
     async function fetchVehicleData(cleanRegNo) {
       const primaryUrl = `https://unsalubriously-unfragrant-rosetta.ngrok-free.dev/api/vehicle-details-only?regn_no=${cleanRegNo}`;
       const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(primaryUrl)}`;
@@ -708,182 +747,104 @@
       return targetObj;
     }
 
-    // 6. EXACT JSON MAPPING & DATA RENDER
-    function renderVehicleData(targetObj, cleanRegNo) {
-      const getVal = (val) => (val !== undefined && val !== null && String(val).trim() !== "") ? val : "NA";
+    // --- DATA MAPPING & DISPLAY ---
+    function renderVehicleDetails(targetObj, cleanRegNo) {
+      const safe = (val) => (val !== undefined && val !== null && val !== '') ? val : 'NA';
 
-      // 🔵 HERO BANNER CARD
+      // 🔵 HERO BANNER
       const mfg = targetObj.meta_data?.signzy_response?.result?.vehicleManufacturerName || '';
       const mdl = targetObj.meta_data?.signzy_response?.result?.model || targetObj.meta_data?.signzy_response?.result?.makerModel || '';
-      const fullModel = (mfg || mdl) ? `${mfg} ${mdl}`.trim() : "VEHICLE DETAILS";
+      const fullMakerModel = (mfg || mdl) ? `${mfg} ${mdl}`.trim() : 'VEHICLE DETAILS';
 
-      document.getElementById('hero-maker-model').innerText = fullModel;
-      document.getElementById('hero-fuel').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.type || targetObj.vehicle_details?.vehicle_type);
-      document.getElementById('hero-norms').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.normsType);
-      document.getElementById('hero-reg-no').innerText = cleanRegNo;
+      document.getElementById('heroMakerModel').textContent = fullMakerModel;
+      document.getElementById('heroFuel').textContent = safe(targetObj.meta_data?.signzy_response?.result?.type || targetObj.vehicle_details?.vehicle_type);
+      document.getElementById('heroNorms').textContent = safe(targetObj.meta_data?.signzy_response?.result?.normsType);
+      document.getElementById('heroRegNo').textContent = cleanRegNo;
 
-      // 📦 SECTION BOX 1: Owner Details
-      document.getElementById('val-owner-name').innerText = getVal(targetObj.customer_details?.full_name || targetObj.meta_data?.signzy_response?.result?.owner);
-      document.getElementById('val-father-name').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.ownerFatherName || targetObj.nominee_details?.name);
-      document.getElementById('val-owner-count').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.ownerCount);
+      // 📦 BOX 1: Owner Details
+      document.getElementById('resOwnerName').textContent = safe(targetObj.customer_details?.full_name || targetObj.meta_data?.signzy_response?.result?.owner);
+      document.getElementById('resFatherName').textContent = safe(targetObj.meta_data?.signzy_response?.result?.ownerFatherName || targetObj.nominee_details?.name);
+      document.getElementById('resOwnerCount').textContent = safe(targetObj.meta_data?.signzy_response?.result?.ownerCount);
 
-      // 📦 SECTION BOX 2: Address Details
-      document.getElementById('val-address').innerText = getVal(
+      // 📦 BOX 2: Address Details
+      document.getElementById('resAddress').textContent = safe(
         targetObj.customer_details?.communication_address?.address_line || 
         targetObj.meta_data?.signzy_response?.result?.presentAddress || 
         targetObj.meta_data?.signzy_response?.result?.permanentAddress
       );
 
-      // 📦 SECTION BOX 3: Technical Specifications
-      document.getElementById('val-chassis').innerText = getVal(targetObj.chassis_number || targetObj.meta_data?.signzy_response?.result?.chassis);
-      document.getElementById('val-engine').innerText = getVal(targetObj.engine_number || targetObj.meta_data?.signzy_response?.result?.engine);
-      document.getElementById('val-cc').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.vehicleCubicCapacity);
+      // 📦 BOX 3: Technical Specifications
+      document.getElementById('resChassis').textContent = safe(targetObj.chassis_number || targetObj.meta_data?.signzy_response?.result?.chassis);
+      document.getElementById('resEngine').textContent = safe(targetObj.engine_number || targetObj.meta_data?.signzy_response?.result?.engine);
+      document.getElementById('resCC').textContent = safe(targetObj.meta_data?.signzy_response?.result?.vehicleCubicCapacity);
 
-      const mfgMonthYear = targetObj.meta_data?.signzy_response?.result?.vehicleManufacturingMonthYear || 
-        (targetObj.manufactured_month && targetObj.manufactured_year ? `${targetObj.manufactured_month}/${targetObj.manufactured_year}` : null);
-      document.getElementById('val-mfg-date').innerText = getVal(mfgMonthYear);
+      // Mfg Month/Year
+      let mfgDateStr = targetObj.meta_data?.signzy_response?.result?.vehicleManufacturingMonthYear;
+      if (!mfgDateStr && targetObj.manufactured_month && targetObj.manufactured_year) {
+        mfgDateStr = `${targetObj.manufactured_month}/${targetObj.manufactured_year}`;
+      }
+      document.getElementById('resMfgDate').textContent = safe(mfgDateStr);
 
-      document.getElementById('val-color').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.vehicleColour || targetObj.vehicle_details?.vehicle_color);
-      document.getElementById('val-weight').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.unladenWeight);
+      document.getElementById('resColor').textContent = safe(targetObj.meta_data?.signzy_response?.result?.vehicleColour || targetObj.vehicle_details?.vehicle_color);
+      document.getElementById('resWeight').textContent = safe(targetObj.meta_data?.signzy_response?.result?.unladenWeight);
 
-      // 📦 SECTION BOX 4: Finance Status
+      // 📦 BOX 4: Finance Status
       const isFinanced = targetObj.vehicle_details?.is_vehicle_financed;
-      const finStatusElem = document.getElementById('val-finance-status');
-      
+      const finStatusEl = document.getElementById('resFinanceStatus');
       if (isFinanced === true) {
-        finStatusElem.innerText = 'FINANCED';
-        finStatusElem.className = 'inline-block mt-1 px-2.5 py-1 rounded text-xs font-bold bg-amber-500/10 border border-amber-500/30 text-amber-400';
+        finStatusEl.textContent = 'FINANCED';
+        finStatusEl.className = 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30';
       } else if (isFinanced === false) {
-        finStatusElem.innerText = 'NO FINANCE / CASH';
-        finStatusElem.className = 'inline-block mt-1 px-2.5 py-1 rounded text-xs font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400';
+        finStatusEl.textContent = 'NO FINANCE / CASH';
+        finStatusEl.className = 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
       } else {
-        finStatusElem.innerText = 'NA';
-        finStatusElem.className = 'inline-block mt-1 px-2.5 py-1 rounded text-xs font-bold bg-slate-800 text-slate-300';
+        finStatusEl.textContent = 'NA';
+        finStatusEl.className = 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider bg-slate-800 text-slate-300';
       }
 
-      document.getElementById('val-financer').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.rcFinancer);
+      document.getElementById('resFinancer').textContent = safe(targetObj.meta_data?.signzy_response?.result?.rcFinancer);
 
-      // 📦 SECTION BOX 5: RC & Compliance Details
-      document.getElementById('val-rto').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.regAuthority);
-      document.getElementById('val-reg-date').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.regDate || targetObj.vehicle_details?.registration_date);
-      document.getElementById('val-rc-expiry').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.rcExpiryDate);
-      document.getElementById('val-tax-upto').innerText = getVal(targetObj.meta_data?.signzy_response?.result?.vehicleTaxUpto);
+      // 📦 BOX 5: RC & Compliance Details
+      document.getElementById('resRTO').textContent = safe(targetObj.meta_data?.signzy_response?.result?.regAuthority);
+      document.getElementById('resRegDate').textContent = safe(targetObj.meta_data?.signzy_response?.result?.regDate || targetObj.vehicle_details?.registration_date);
+      document.getElementById('resRcExpiry').textContent = safe(targetObj.meta_data?.signzy_response?.result?.rcExpiryDate);
+      document.getElementById('resTaxExpiry').textContent = safe(targetObj.meta_data?.signzy_response?.result?.vehicleTaxUpto);
     }
 
-    // 7. RECHARGE & UPI QR CODE SYSTEM
-    document.getElementById('btn-open-recharge').addEventListener('click', () => showRechargeModal(false));
+    // --- TOAST NOTIFICATIONS ---
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
 
-    function showRechargeModal(isBlocked = false) {
-      const modal = document.getElementById('modal-recharge');
-      const subtitle = document.getElementById('recharge-modal-subtitle');
+      const bgColors = {
+        success: 'bg-slate-900/90 border-emerald-500 text-emerald-300',
+        error: 'bg-slate-900/90 border-rose-500 text-rose-300',
+        info: 'bg-slate-900/90 border-cyan-500 text-cyan-300'
+      };
 
-      if (isBlocked) {
-        subtitle.innerText = "Recharge Required: Your wallet points balance is 0.";
-        subtitle.classList.add('text-rose-400', 'font-semibold');
-      } else {
-        subtitle.innerText = "Scan QR code or click preset amount to pay via UPI";
-        subtitle.classList.remove('text-rose-400', 'font-semibold');
-      }
+      const icons = {
+        success: 'check-circle-2',
+        error: 'alert-circle',
+        info: 'info'
+      };
 
-      selectAmount(70);
-      modal.classList.remove('hidden');
-    }
+      toast.className = `pointer-events-auto p-4 rounded-xl border backdrop-blur-md shadow-2xl flex items-center gap-3 transition-all duration-300 transform translate-y-2 opacity-0 ${bgColors[type] || bgColors.info}`;
+      toast.innerHTML = `
+        <i data-lucide="${icons[type] || 'info'}" class="w-5 h-5 flex-shrink-0"></i>
+        <span class="text-xs font-semibold leading-tight">${message}</span>
+      `;
 
-    function closeRechargeModal() {
-      document.getElementById('modal-recharge').classList.add('hidden');
-      if (qrTimerInterval) clearInterval(qrTimerInterval);
-    }
+      container.appendChild(toast);
+      lucide.createIcons();
 
-    function selectAmount(amt) {
-      activeAmount = amt;
-      generateQrAndWaLink(amt);
-      startQrTimer(240); // 4-minute timer
-    }
-
-    function generateQrAndWaLink(amt) {
-      const upiUrl = `upi://pay?pa=${TARGET_UPI}&pn=EliteVehicleDesk&am=${amt}&cu=INR`;
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(upiUrl)}&size=200x200`;
-
-      document.getElementById('upi-qr-img').src = qrApiUrl;
-
-      // WhatsApp pre-filled message setup
-      const waMsg = `Hello, I have completed the payment of ₹${amt} for Elite Vehicle Desk points recharge. My UPI ID is ${TARGET_UPI}. Please credit points.`;
-      const waUrl = `https://wa.me/${TARGET_WA_NO}?text=${encodeURIComponent(waMsg)}`;
-      document.getElementById('btn-whatsapp').href = waUrl;
-    }
-
-    function startQrTimer(durationSeconds) {
-      if (qrTimerInterval) clearInterval(qrTimerInterval);
-
-      let timer = durationSeconds;
-      const display = document.getElementById('qr-timer');
-
-      qrTimerInterval = setInterval(() => {
-        const minutes = Math.floor(timer / 60);
-        const seconds = timer % 60;
-
-        display.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-        if (--timer < 0) {
-          clearInterval(qrTimerInterval);
-          display.innerText = "EXPIRED";
-          showToast("QR Code expired. Regenerating...", "error");
-          selectAmount(activeAmount);
-        }
-      }, 1000);
-    }
-
-    // 8. SECRET ADMIN PANEL TRIGGER & LOGIC
-    function setupLogoTrigger() {
-      const logo = document.getElementById('logo-trigger');
-      logo.addEventListener('click', () => {
-        logoClickCount++;
-        clearTimeout(logoClickTimer);
-
-        if (logoClickCount >= 5) {
-          logoClickCount = 0;
-          openAdminAuthModal();
-        } else {
-          logoClickTimer = setTimeout(() => {
-            logoClickCount = 0;
-          }, 1500); // Must tap 5 times within 1.5 seconds
-        }
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
       });
-    }
 
-    function openAdminAuthModal() {
-      document.getElementById('admin-passcode-input').value = '';
-      document.getElementById('modal-admin-auth').classList.remove('hidden');
-    }
-
-    function closeAdminAuthModal() {
-      document.getElementById('modal-admin-auth').classList.add('hidden');
-    }
-
-    function submitAdminPasscode() {
-      const passcode = document.getElementById('admin-passcode-input').value;
-      if (passcode === '9696') {
-        closeAdminAuthModal();
-        openAdminPanelModal();
-      } else {
-        showToast("Incorrect Admin Passcode!", "error");
-      }
-    }
-
-    function openAdminPanelModal() {
-      document.getElementById('admin-points-input').value = currentPoints;
-      document.getElementById('modal-admin-panel').classList.remove('hidden');
-    }
-
-    function closeAdminPanelModal() {
-      document.getElementById('modal-admin-panel').classList.add('hidden');
-    }
-
-    function updatePointsFromAdmin() {
-      const newPts = document.getElementById('admin-points-input').value;
-      setPoints(newPts);
-      closeAdminPanelModal();
-      showToast(`Wallet points updated to ${newPts}!`, "success");
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
     }
   </script>
 </body>
