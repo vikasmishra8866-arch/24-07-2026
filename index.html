@@ -39,7 +39,7 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
-                    <input type="text" id="vehicleInput" value="" placeholder="e.g. UP32FT8571" required
+                    <input type="text" id="vehicleInput" value="" placeholder="e.g. GJ05MS9717" required
                         class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white uppercase tracking-wider font-medium text-slate-900">
                 </div>
                 <button type="submit" id="searchBtn"
@@ -58,7 +58,7 @@
         <!-- Error Message -->
         <div id="errorMsg" class="hidden bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-center mb-6 font-medium"></div>
 
-        <!-- Result Section (Initially Blank / Hidden until searched) -->
+        <!-- Result Section -->
         <div id="resultContainer" class="hidden space-y-6">
             
             <!-- Vehicle & Owner Summary Card -->
@@ -166,38 +166,36 @@
             try {
                 const apiUrl = `https://randkikichut.vercel.app/?vehicle_number=${vehicleNumber}`;
                 const response = await fetch(apiUrl);
-                const textResponse = await response.text();
-
-                let jsonResponse;
-                try {
-                    jsonResponse = JSON.parse(textResponse);
-                } catch (parseErr) {
-                    throw new Error("Server returned invalid response format.");
-                }
+                const jsonResponse = await response.json();
 
                 loader.classList.add('hidden');
 
-                if (jsonResponse && jsonResponse.length > 0 && jsonResponse[0].status === "success") {
-                    const data = jsonResponse[0].data;
-                    populateData(data);
+                // Handle both Array format and Direct Object format safely
+                let vehicleData = null;
+                if (Array.isArray(jsonResponse) && jsonResponse.length > 0 && jsonResponse[0].status === "success") {
+                    vehicleData = jsonResponse[0].data;
+                } else if (jsonResponse && jsonResponse.status === "success") {
+                    vehicleData = jsonResponse.data;
+                }
+
+                if (vehicleData) {
+                    populateData(vehicleData);
                     resultContainer.classList.remove('hidden');
                 } else {
                     showError(`Vehicle details for "${vehicleNumber}" not found on the server.`);
                 }
             } catch (err) {
                 loader.classList.add('hidden');
-                showError("Failed to fetch data: " + err.message);
+                showError("Failed to fetch data. Make sure network and API are accessible.");
             }
         });
 
         function populateData(d) {
-            // Header Info
             document.getElementById('rcNumberDisplay').textContent = d.rc_number || 'N/A';
             document.getElementById('vehicleModelName').textContent = d.maker_model || d.modelData?.v_model_name || 'N/A';
             document.getElementById('vehicleCategory').textContent = d.vehicle_category_description || 'N/A';
             document.getElementById('registeredAt').textContent = d.registered_at || 'N/A';
             
-            // Status Badge
             const statusBadge = document.getElementById('rcStatus');
             statusBadge.textContent = d.rc_status || 'UNKNOWN';
             if(d.rc_status === 'ACTIVE') {
@@ -206,7 +204,6 @@
                 statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-200";
             }
 
-            // Brand Logo
             const logoContainer = document.getElementById('brandLogoContainer');
             if (d.makeData && d.makeData.v_make_logo_url) {
                 logoContainer.innerHTML = `<img src="${d.makeData.v_make_logo_url}" alt="Logo" class="max-h-full max-w-full object-contain">`;
@@ -214,7 +211,6 @@
                 logoContainer.innerHTML = `<i class="fa-solid fa-motorcycle text-xl text-slate-400"></i>`;
             }
 
-            // Grid Fields
             document.getElementById('ownerName').textContent = d.owner_name || 'N/A';
             document.getElementById('fuelType').textContent = d.fuel_type || 'N/A';
             document.getElementById('makerModel').textContent = `${d.maker_description || ''} (${d.maker_model || ''})`;
@@ -222,7 +218,6 @@
             document.getElementById('fitUpto').textContent = d.fit_up_to || 'N/A';
             document.getElementById('insuranceUpto').textContent = d.insurance_upto || 'N/A';
 
-            // Technical Details
             document.getElementById('chassisNum').textContent = d.vehicle_chasi_number || 'N/A';
             document.getElementById('engineNum').textContent = d.vehicle_engine_number || 'N/A';
             document.getElementById('normsType').textContent = d.norms_type || 'N/A';
