@@ -131,7 +131,7 @@
 
       <form id="search-form" onsubmit="handleSearch(event)" class="max-w-2xl mx-auto space-y-4">
         <div class="relative flex items-center">
-          <div class="absolute left-4 text-slate-400">
+          <div class="absolute left-4 z-10 text-slate-400 pointer-events-none">
             <i data-lucide="car" class="w-6 h-6"></i>
           </div>
           <input 
@@ -140,9 +140,9 @@
             placeholder="e.g. UP32XX1234 or DL01AB9999"
             maxlength="13"
             required
-            class="w-full bg-slate-900/90 text-white placeholder-slate-500 text-lg font-mono tracking-wider font-semibold pl-13 pr-32 py-4 rounded-xl border border-slate-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 outline-none transition-all uppercase"
+            class="w-full bg-slate-900/90 text-white placeholder-slate-500 text-lg font-mono tracking-wider font-semibold text-center pl-14 pr-36 py-4 rounded-xl border border-slate-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 outline-none transition-all uppercase"
           />
-          <div class="absolute right-2 flex items-center space-x-2">
+          <div class="absolute right-2 z-10 flex items-center space-x-2">
             <button 
               type="submit" 
               id="search-btn"
