@@ -134,7 +134,6 @@
           <div class="absolute left-4 z-10 text-slate-400 pointer-events-none">
             <i data-lucide="car" class="w-6 h-6"></i>
           </div>
-          <!-- TEXT LEFT ALIGNED FIX -->
           <input 
             type="text" 
             id="reg-input" 
@@ -277,7 +276,7 @@
 
   </main>
 
-  <!-- RECHARGE & UPI QR CODE MODAL -->
+  <!-- MODIFIED RECHARGE & UPI QR CODE MODAL (NO TYPING INPUT) -->
   <div id="recharge-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
     <div class="glass-modal rounded-2xl max-w-md w-full p-6 space-y-5 border border-slate-700 shadow-2xl relative max-h-[90vh] overflow-y-auto">
       <button onclick="closeRechargeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
@@ -292,54 +291,36 @@
         <p class="text-xs text-slate-400">Standard Rate: <span class="text-emerald-400 font-bold">1 Point = ₹15</span></p>
       </div>
 
-      <div class="space-y-1.5">
-        <label class="text-xs text-slate-400 font-medium">Quick Preset Amount:</label>
-        <div class="grid grid-cols-3 gap-2">
-          <button onclick="selectPreset(70)" class="preset-btn bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 hover:border-emerald-500 py-2.5 rounded-xl text-center transition-all">
-            <span class="block text-xs text-slate-400">₹70</span>
-            <span class="block text-xs font-bold text-emerald-400">~4 Points</span>
+      <!-- POINT PACKAGES OPTIONS ONLY -->
+      <div class="space-y-2">
+        <label class="text-xs text-slate-400 font-medium block">Select Points Package:</label>
+        <div class="grid grid-cols-3 gap-2.5">
+          <!-- 4 Points Package -->
+          <button id="pkg-btn-4" onclick="selectPackage(4, 60)" class="pkg-card bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 p-3 rounded-xl text-center transition-all cursor-pointer">
+            <span class="block text-sm font-bold text-emerald-400">4 Points</span>
+            <span class="block text-xs font-semibold text-slate-300 mt-1">₹60</span>
           </button>
-          <button onclick="selectPreset(100)" class="preset-btn bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 hover:border-emerald-500 py-2.5 rounded-xl text-center transition-all">
-            <span class="block text-xs text-slate-400">₹100</span>
-            <span class="block text-xs font-bold text-emerald-400">~6 Points</span>
+          
+          <!-- 10 Points Package -->
+          <button id="pkg-btn-10" onclick="selectPackage(10, 120)" class="pkg-card bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 p-3 rounded-xl text-center transition-all cursor-pointer">
+            <span class="block text-sm font-bold text-emerald-400">10 Points</span>
+            <span class="block text-xs font-semibold text-slate-300 mt-1">₹120</span>
+            <span class="inline-block text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded mt-1 font-medium">Offer</span>
           </button>
-          <button onclick="selectPreset(150)" class="preset-btn bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 hover:border-emerald-500 py-2.5 rounded-xl text-center transition-all">
-            <span class="block text-xs text-slate-400">₹150</span>
-            <span class="block text-xs font-bold text-emerald-400">10 Points</span>
+
+          <!-- 15 Points Package -->
+          <button id="pkg-btn-15" onclick="selectPackage(15, 170)" class="pkg-card bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 p-3 rounded-xl text-center transition-all cursor-pointer">
+            <span class="block text-sm font-bold text-emerald-400">15 Points</span>
+            <span class="block text-xs font-semibold text-slate-300 mt-1">₹170</span>
+            <span class="inline-block text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded mt-1 font-medium">Special</span>
           </button>
         </div>
       </div>
 
-      <div class="space-y-1.5">
-        <label class="text-xs text-slate-400 font-medium">Or Select Quick Points Package:</label>
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="selectPointPackage(10)" class="preset-btn bg-emerald-950/40 hover:bg-emerald-800/40 border border-emerald-500/40 py-2.5 rounded-xl text-center transition-all">
-            <span class="block text-sm font-bold text-emerald-300">+10 Points</span>
-            <span class="block text-[11px] text-slate-400">Charge: ₹150</span>
-          </button>
-          <button onclick="selectPointPackage(20)" class="preset-btn bg-emerald-950/40 hover:bg-emerald-800/40 border border-emerald-500/40 py-2.5 rounded-xl text-center transition-all">
-            <span class="block text-sm font-bold text-emerald-300">+20 Points</span>
-            <span class="block text-[11px] text-slate-400">Charge: ₹300</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="space-y-1">
-        <div class="flex justify-between text-xs">
-          <label class="text-slate-300">Custom Amount (Min ₹70):</label>
-          <span id="points-calc" class="text-emerald-400 font-semibold">4 Points</span>
-        </div>
-        <div class="relative">
-          <span class="absolute left-3.5 top-2.5 text-slate-400 font-bold">₹</span>
-          <input 
-            type="number" 
-            id="recharge-amount" 
-            value="70" 
-            min="70" 
-            oninput="updateQR()" 
-            class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-8 pr-4 py-2 text-white font-bold focus:border-emerald-500 outline-none"
-          />
-        </div>
+      <!-- SELECTED PACKAGE DISPLAY STATUS -->
+      <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-3 flex items-center justify-between text-xs">
+        <span class="text-slate-400">Selected Plan:</span>
+        <span class="font-bold text-emerald-400"><span id="selected-pts-label">4</span> Points (<span id="selected-amt-label">₹60</span>)</span>
       </div>
 
       <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-center space-y-3">
@@ -457,8 +438,11 @@
     let logoClickTimer = null;
     let dbRef = null;
 
+    // Selected Recharge Package State
+    let selectedPoints = 4;
+    let selectedAmount = 60;
+
     function initFirebaseCloudWallet() {
-      // Immediate initial local display
       updatePointsDisplay();
 
       try {
@@ -467,7 +451,6 @@
         }
         dbRef = firebase.database().ref('global_wallet/points');
 
-        // Realtime Listener across PC, Mobile & New devices
         dbRef.on('value', (snapshot) => {
           const val = snapshot.val();
           if (val === null || val === undefined) {
@@ -523,11 +506,11 @@
     });
 
     // -------------------------------------------------------------
-    // 3. RECHARGE & UPI QR SYSTEM
+    // 3. RECHARGE & UPI QR SYSTEM (MODIFIED PACKAGE SELECTOR)
     // -------------------------------------------------------------
     function openRechargeModal() {
       document.getElementById('recharge-modal').classList.remove('hidden');
-      updateQR();
+      selectPackage(4, 60); // Default set to 4 Points = ₹60
       startQRTimer();
     }
 
@@ -536,31 +519,39 @@
       clearInterval(qrTimerInterval);
     }
 
-    function selectPreset(amount) {
-      document.getElementById('recharge-amount').value = amount;
-      updateQR();
-    }
+    function selectPackage(points, amount) {
+      selectedPoints = points;
+      selectedAmount = amount;
 
-    function selectPointPackage(points) {
-      const amount = points * 15;
-      document.getElementById('recharge-amount').value = amount;
+      // Highlight Selected Card UI
+      const packages = [4, 10, 15];
+      packages.forEach(p => {
+        const btn = document.getElementById(`pkg-btn-${p}`);
+        if (btn) {
+          if (p === points) {
+            btn.classList.add('border-emerald-500', 'bg-emerald-950/40', 'ring-2', 'ring-emerald-500/30');
+            btn.classList.remove('border-slate-700', 'bg-slate-800');
+          } else {
+            btn.classList.remove('border-emerald-500', 'bg-emerald-950/40', 'ring-2', 'ring-emerald-500/30');
+            btn.classList.add('border-slate-700', 'bg-slate-800');
+          }
+        }
+      });
+
+      document.getElementById('selected-pts-label').textContent = points;
+      document.getElementById('selected-amt-label').textContent = `₹${amount}`;
+
       updateQR();
     }
 
     function updateQR() {
-      const amountInput = document.getElementById('recharge-amount');
-      let amount = parseFloat(amountInput.value) || 0;
-      
-      const calculatedPoints = Math.floor(amount / 15);
-      document.getElementById('points-calc').textContent = `~${calculatedPoints} Point(s)`;
-
       const targetUpi = "9696159863.wallet@phonepe";
-      const upiUrl = `upi://pay?pa=${targetUpi}&pn=EliteVehicleDesk&am=${amount}&cu=INR`;
+      const upiUrl = `upi://pay?pa=${targetUpi}&pn=EliteVehicleDesk&am=${selectedAmount}&cu=INR`;
       const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
       
       document.getElementById('qr-code-img').src = qrApiUrl;
 
-      const waMessage = `Hello Admin, I have paid ₹${amount} for ${calculatedPoints} Points recharge on Elite Vehicle Desk. Please approve.`;
+      const waMessage = `Hello Admin, I have paid ₹${selectedAmount} for ${selectedPoints} Points recharge on Elite Vehicle Desk. Please approve.`;
       const waUrl = `https://wa.me/919696159863?text=${encodeURIComponent(waMessage)}`;
       document.getElementById('whatsapp-btn').href = waUrl;
     }
